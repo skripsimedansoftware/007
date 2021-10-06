@@ -384,7 +384,7 @@ function readURL(input) {
 	}
 }
 
- $('.datatable').DataTable();
+$('.datatable').DataTable();
 </script>
 </body>
 </html>
