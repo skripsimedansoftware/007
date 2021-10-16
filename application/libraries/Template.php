@@ -15,6 +15,11 @@ class Template
         }
 	}
 
+	public function set_module($module)
+	{
+		$this->module = $module;
+	}
+
 	public function load($page, $params = array())
 	{
 		$data['page'] = $this->ci->load->view($this->module.'/'.$page, $params, TRUE);
