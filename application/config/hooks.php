@@ -40,7 +40,15 @@ $hook['pre_controller'] = NULL;
  *
  * Called immediately after your controller is instantiated, but prior to any method calls happening.
  */
-$hook['post_controller_constructor'] = NULL;
+$hook['post_controller_constructor'] = array(
+	array(
+		'class'		=> 'Booting\Application',
+		'function'	=> 'language',
+		'filename'	=> 'Application.php',
+		'filepath'	=> 'hooks',
+		'params'	=> array('web')
+	)
+);
 
 /**
  * -------------------------------------------------------------------------
