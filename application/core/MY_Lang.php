@@ -272,7 +272,7 @@ class MY_Lang extends CI_Lang
 	{
 		return array_values(array_filter(array_map(function($language){
 			return rtrim(stripslashes($language), '/');
-		}, array_keys(directory_map(APPPATH.'language')))));
+		}, array_keys(directory_map(ASSETS_PATH.DIRECTORY_SEPARATOR.'languages')))));
 	}	
 }
 
