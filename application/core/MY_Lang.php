@@ -1,87 +1,62 @@
-<?php
-
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 /**
- * CodeIgniter
- *
- * An open source application development framework for PHP
- *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2014-2019, British Columbia Institute of Technology
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @package	CodeIgniter
- * @author	EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright	Copyright (c) 2014-2019, British Columbia Institute of Technology (https://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	https://codeigniter.com
- * @since	Version 1.0.0
- * @filesource
+ * @package Codeigniter
+ * @subpackage Language
+ * @category Libraries
+ * @author Agung Dirgantara <agungmasda29@gmail.com>
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
 
-/**
- * Language Class extension.
- * 
- * Adds language fallback handling.
- * 
- * When loading a language file, CodeIgniter will load first the english version, 
- * if appropriate, and then the one appropriate to the language you specify. 
- * This lets you define only the language settings that you wish to over-ride 
- * in your idiom-specific files.
- * 
- * This has the added benefit of the language facility not breaking if a new 
- * language setting is added to the built-in ones (english), but not yet 
- * provided for in one of the translations.
- * 
- * To use this capability, transparently, copy this file (MY_Lang.php)
- * into your application/core folder.
- *
- * @package		CodeIgniter
- * @subpackage	Libraries
- * @category	Language
- * @author		EllisLab Dev Team
- * @link		https://codeigniter.com/user_guide/libraries/language.html
- */
-class MY_Lang extends CI_Lang {
-
+class MY_Lang extends CI_Lang
+{
 	/**
 	 * Refactor: base language provided inside system/language
 	 * 
 	 * @var string
 	 */
-	public $base_language = 'english';
+	public $base_language;
 
-	/**
-	 * Class constructor
-	 *
-	 * @return	void
-	 */
+	public $current_language;
+
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->base_language = config_item('language');
+		$this->current_language = array_key_exists('language', $_COOKIE)?$_COOKIE['language']:$this->base_language;
+	}
+
+	/**
+	 * Get base language
+	 * 
+	 * @return string
+	 */
+	public function get_base_language()
+	{
+		return $this->base_language;
+	}
+
+	/**
+	 * Set current language
+	 * 
+	 * @param string $language
+	 */
+	public function set_current_language($language = '')
+	{
+		$this->current_language = $language;
+	}
+
+	/**
+	 * Get current language
+	 * 
+	 * @return string
+	 */
+	public function get_current_language()
+	{
+		return $this->current_language;
 	}
 
 	// --------------------------------------------------------------------
-
+	
 	/**
 	 * Load a language file, with fallback to english.
 	 *
@@ -90,11 +65,15 @@ class MY_Lang extends CI_Lang {
 	 * @param	bool	$return		Whether to return the loaded array of translations
 	 * @param 	bool	$add_suffix	Whether to add suffix to $langfile
 	 * @param 	string	$alt_path	Alternative path to look for the language file
-	 *
 	 * @return	void|string[]	Array containing translations, if $return is set to TRUE
 	 */
 	public function load($langfile, $idiom = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '')
 	{
+		if (empty($idiom))
+		{
+			$idiom = $this->get_current_language();
+		}
+
 		if (is_array($langfile))
 		{
 			foreach ($langfile as $value)
@@ -128,6 +107,7 @@ class MY_Lang extends CI_Lang {
 		// load the default language first, if necessary
 		// only do this for the language files under system/
 		$basepath = SYSDIR . 'language/' . $this->base_language . '/' . $langfile;
+
 		if (($found = file_exists($basepath)) === TRUE)
 		{
 			include($basepath);
@@ -135,6 +115,7 @@ class MY_Lang extends CI_Lang {
 
 		// Load the base file, so any others found can override it
 		$basepath = BASEPATH . 'language/' . $idiom . '/' . $langfile;
+		
 		if (($found = file_exists($basepath)) === TRUE)
 		{
 			include($basepath);
@@ -149,33 +130,76 @@ class MY_Lang extends CI_Lang {
 				include($alt_path);
 				$found = TRUE;
 			}
-		} else
+		}
+		else
 		{
 			foreach (get_instance()->load->get_package_paths(TRUE) as $package_path)
 			{
-				$package_path .= 'language/' . $idiom . '/' . $langfile;
-				if ($basepath !== $package_path && file_exists($package_path))
+				$language_path = $package_path.'language/' . $idiom . '/' . $langfile;
+				if ($basepath !== $language_path && file_exists($language_path))
 				{
-					include($package_path);
+					include($language_path);
 					$found = TRUE;
 					break;
+				}
+				else
+				{
+					if (file_exists($package_path.'language/' . $this->base_language . '/' . $langfile))
+					{
+						include($package_path.'language/' . $this->base_language . '/' . $langfile);
+						$found = TRUE;
+						$idiom = $this->base_language;
+						log_message('info', 'Language file loaded: language/' . $idiom . '/' . $langfile.' - using default language:'.$this->base_language);
+						break;
+					}
 				}
 			}
 		}
 
 		if ($found !== TRUE)
 		{
-			show_error('Unable to load the requested language file: language/' . $idiom . '/' . $langfile);
+			$langfile = str_replace(['_lang', '.php'], ['','.json'], $langfile);
+
+			if (file_exists(ASSETS_PATH.'/languages/'.$idiom.'/'.$langfile))
+			{
+				$found = TRUE;
+
+				if (valid_json(file_get_contents(ASSETS_PATH.'/languages/'.$idiom.'/'.$langfile)))
+				{
+					foreach (json_decode(file_get_contents(ASSETS_PATH.'/languages/'.$idiom.'/'.$langfile)) as $key => $value)
+					{
+						$lang[$key] = $value;
+					}
+				}
+			}
+			elseif (file_exists(ASSETS_PATH.'/languages/'.$this->base_language.'/'.$langfile))
+			{
+				$found = TRUE;
+				$idiom = $this->base_language;
+
+				if (valid_json(file_get_contents(ASSETS_PATH.'/languages/'.$this->base_language.'/'.$langfile)))
+				{
+					foreach (json_decode(file_get_contents(ASSETS_PATH.'/languages/'.$this->base_language.'/'.$langfile)) as $key => $value)
+					{
+						$lang[$key] = $value;
+					}
+				}
+			}
+			else
+			{
+				log_message('error', 'Unable to load the requested language file: languages/' . $idiom . '/' . $langfile);
+			}
 		}
 
 		if (!isset($lang) OR ! is_array($lang))
 		{
-			log_message('error', 'Language file contains no data: language/' . $idiom . '/' . $langfile);
+			log_message('error', 'Language file contains no data: languages/' . $idiom . '/' . $langfile);
 
 			if ($return === TRUE)
 			{
 				return array();
 			}
+
 			return;
 		}
 
@@ -187,12 +211,70 @@ class MY_Lang extends CI_Lang {
 		$this->is_loaded[$langfile] = $idiom;
 		$this->language = array_merge($this->language, $lang);
 
-		log_message('info', 'Language file loaded: language/' . $idiom . '/' . $langfile);
+		log_message('info', 'Language file loaded: languages/' . $idiom . '/' . $langfile);
 		return TRUE;
 	}
 
-	public function set_current_language($language = '')
+	/**
+	 * Language line
+	 *
+	 * Fetches a single line of text from the language array
+	 *
+	 * @param	string	$line		Language line key
+	 * @param	bool	$log_errors	Whether to log an error message if the line is not found
+	 * @return	string	Translation
+	 */
+	public function line($line, $log_errors = TRUE)
 	{
-		$this->current_language = $language;
+		$value = isset($this->language[$line]) ? $this->language[$line] : FALSE;
+
+		if ($value === FALSE)
+		{
+			$loaded_files = array_map(function($file) {
+				return str_replace(['.php', '.json'], '', $file);
+			}, array_keys($this->is_loaded));
+
+			$languages = array();
+
+			foreach ($loaded_files as $file)
+			{
+				$languages_file = $this->load($file, $this->base_language, TRUE);
+				$languages = array_merge($languages, $languages_file);
+
+				if (isset($languages_file[$line]))
+				{
+					// found key on file
+					if ($log_errors)
+					{
+						log_message('error', 'Could not find the language line "'.$line.'" in file "'.$file.'" for "'.$this->current_language.'" language');
+					}
+				}
+			}
+
+			$value = isset($languages[$line]) ? $languages[$line] : FALSE;
+		}
+
+		// Because killer robots like unicorns!
+		if ($value === FALSE && $log_errors === TRUE)
+		{
+			log_message('error', 'Could not find the language line "'.$line.'"');
+		}
+
+		return $value;
 	}
+
+	/**
+	 * Available languages
+	 * 
+	 * @return array
+	 */
+	public function available_languages()
+	{
+		return array_values(array_filter(array_map(function($language){
+			return rtrim(stripslashes($language), '/');
+		}, array_keys(directory_map(APPPATH.'language')))));
+	}	
 }
+
+/* End of file MY_Lang.php */
+/* Location : ./application/core/MY_Lang.php */
