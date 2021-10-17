@@ -20,6 +20,12 @@ if (isset($_SERVER['SERVER_PORT']))
 	define('CURRENT_URL', (!empty($_SERVER['SERVER_PORT'])?$_SERVER['SERVER_PORT']==443?'https':'http':FALSE)."://".(!empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:FALSE).str_replace('//', '/', $_SERVER['REQUEST_URI']));
 }
 
+/*
+|--------------------------------------------------------------------------
+| Assets Path
+|--------------------------------------------------------------------------
+*/
+defined('ASSETS_PATH') or define('ASSETS_PATH', isset($_SERVER['ASSETS_PATH']) ? $_SERVER['ASSETS_PATH'] : FCPATH.'assets');
 
 /*
 |--------------------------------------------------------------------------
