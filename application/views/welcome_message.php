@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Welcome to CodeIgniter</title>
+	<title><?php echo ucfirst(lang('welcome_to')) ?> CodeIgniter</title>
 
 	<style type="text/css">
 
@@ -68,22 +68,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
 
 <div id="container">
-	<h1>Welcome to CodeIgniter!</h1>
+	<h1><?php echo ucfirst(lang('welcome_to')) ?> CodeIgniter!</h1>
 
 	<div id="body">
-		<p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
+		<p><?php echo ucfirst(lang('codeigniter_landing__page_p1')) ?> CodeIgniter.</p>
 
-		<p>If you would like to edit this page you'll find it located at:</p>
+		<p><?php echo ucfirst(lang('codeigniter_landing__page_p2')) ?>:</p>
 		<code>application/views/welcome_message.php</code>
 
-		<p>The corresponding controller for this page is found at:</p>
+		<p><?php echo ucfirst(lang('codeigniter_landing__page_p3')) ?>:</p>
 		<code>application/controllers/Welcome.php</code>
 
-		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">User Guide</a>.</p>
+		<p><?php echo ucfirst(lang('codeigniter_landing__page_p4')) ?> <a href="user_guide/"><?php echo ucwords(lang('user_guide')) ?></a>.</p>
 		<p><a href="<?php echo base_url('admin') ?>">Login Here</a></p>
 	</div>
 
-	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></p>
+	<ul>
+		<li>available languages</li>
+		<ol>
+			<?php foreach ($this->lang->available_languages() as $available_language) : ?>
+			<li><a href="<?php echo language_link($available_language) ?>"><?php echo $available_language ?></a></li>
+			<?php endforeach; ?>
+		</ol>
+		<li>system languages</li>
+		<ol>
+			<?php foreach ($this->lang->system_languages() as $available_language) : ?>
+			<li><a href="<?php echo language_link($available_language) ?>"><?php echo $available_language ?></a></li>
+			<?php endforeach; ?>
+		</ol>
+	</ul>
+
+	<p class="footer"><?php ucfirst(lang('page_rendered_in')) ?> <strong>{elapsed_time}</strong> <?php echo lang('seconds') ?>. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter '.ucfirst(lang('version')).' <strong>' . CI_VERSION . '</strong>' : '' ?></p>
 </div>
 
 </body>
