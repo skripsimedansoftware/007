@@ -1,0 +1,15 @@
+{
+	"welcome_to" : "welcome to",
+	"codeigniter_landing__page_p1" : "The page you are looking at is being generated dynamically by",
+	"codeigniter_landing__page_p2" : "If you would like to edit this page you'll find it located at",
+	"codeigniter_landing__page_p3" : "The corresponding controller for this page is found at",
+	"codeigniter_landing__page_p4" : "If you are exploring CodeIgniter for the very first time, you should start by reading the",
+	"user_guide" : "User Guide",
+	"page_rendered_in" : "Page rendered in",
+	"second" : "second",
+	"seconds" : "seconds",
+	"version" : "Version",
+	"sign_up" : "sign up",
+	"sign_in" : "sign in",
+	"sign_out" : "sign out"
+}

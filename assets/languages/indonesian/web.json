@@ -1,0 +1,15 @@
+{
+	"welcome_to" : "selamat datang di",
+	"codeigniter_landing__page_p1" : "halaman yang Anda lihat sedang dibuat secara dinamis oleh",
+	"codeigniter_landing__page_p2" : "jika anda ingin mengedit halaman ini, anda akan menemukannya di",
+	"codeigniter_landing__page_p3" : "pengontrol yang sesuai untuk halaman ini dapat ditemukan di",
+	"codeigniter_landing__page_p4" : "jika anda menjelajahi CodeIgniter untuk pertama kalinya, anda harus mulai dengan membaca",
+	"user_guide" : "panduan pengguna",
+	"page_rendered_in" : "halaman dimuat dalam",
+	"second" : "detik",
+	"seconds" : "detik",
+	"version" : "versi",
+	"sign_up" : "mendaftar",
+	"sign_in" : "masuk",
+	"sign_out" : "keluar"
+}
