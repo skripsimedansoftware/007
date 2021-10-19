@@ -8,6 +8,8 @@ application/logs/*
 
 !application/*/.htaccess
 
+application/vendor/*
+
 uploads/*
 !uploads/index.html
 
