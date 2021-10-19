@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2021 at 10:42 PM
+-- Generation Time: Oct 19, 2021 at 08:37 PM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 7.3.29
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `email_confirm` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `type` varchar(40) NOT NULL,
   `user_uid` varchar(40) NOT NULL,
   `confirm_code` int(6) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE `email_confirm` (
 --
 
 CREATE TABLE `user` (
-  `id` int(2) NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `role` enum('admin','member') NOT NULL,
   `email` varchar(40) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -83,13 +83,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `email_confirm`
 --
 ALTER TABLE `email_confirm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
