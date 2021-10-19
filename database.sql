@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2021 at 08:37 PM
+-- Generation Time: Oct 19, 2021 at 11:03 PM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 7.3.29
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `codeigniter-starter`
+-- Database: `codeigniter-web`
 --
 
 -- --------------------------------------------------------
@@ -34,6 +34,27 @@ CREATE TABLE `email_confirm` (
   `confirm_code` int(6) NOT NULL,
   `expire_date` datetime NOT NULL,
   `status` enum('unconfirmed','confirmed') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `post`
+--
+
+CREATE TABLE `post` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `parent` bigint(20) UNSIGNED NOT NULL,
+  `author` bigint(20) UNSIGNED NOT NULL,
+  `slug` varchar(120) NOT NULL,
+  `title` varchar(120) NOT NULL,
+  `headline` varchar(100) DEFAULT NULL,
+  `keywords` varchar(200) DEFAULT NULL,
+  `content` longtext DEFAULT NULL,
+  `published_date` datetime DEFAULT NULL,
+  `created_date` datetime NOT NULL,
+  `updated_date` datetime NOT NULL,
+  `status` enum('draft','publish','revision') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -70,6 +91,12 @@ ALTER TABLE `email_confirm`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `post`
+--
+ALTER TABLE `post`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -83,6 +110,12 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `email_confirm`
 --
 ALTER TABLE `email_confirm`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `post`
+--
+ALTER TABLE `post`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
