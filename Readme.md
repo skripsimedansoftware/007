@@ -1,4 +1,4 @@
-# Medan Software - Codeigniter Starter :coffee:
+# Medan Software - Codeigniter Web :coffee:
 
 ## Note!!
 
