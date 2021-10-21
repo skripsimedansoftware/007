@@ -2,10 +2,10 @@
 -- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Oct 19, 2021 at 11:03 PM
--- Server version: 10.4.20-MariaDB
--- PHP Version: 7.3.29
+-- Host: localhost
+-- Generation Time: Oct 21, 2021 at 08:40 PM
+-- Server version: 10.4.21-MariaDB
+-- PHP Version: 7.3.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,12 +29,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `email_confirm` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `type` varchar(40) NOT NULL,
-  `user_uid` varchar(40) NOT NULL,
+  `type` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_uid` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `confirm_code` int(6) NOT NULL,
   `expire_date` datetime NOT NULL,
-  `status` enum('unconfirmed','confirmed') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `status` enum('unconfirmed','confirmed') COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -45,17 +45,18 @@ CREATE TABLE `email_confirm` (
 CREATE TABLE `post` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `parent` bigint(20) UNSIGNED NOT NULL,
+  `language` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `author` bigint(20) UNSIGNED NOT NULL,
-  `slug` varchar(120) NOT NULL,
-  `title` varchar(120) NOT NULL,
-  `headline` varchar(100) DEFAULT NULL,
-  `keywords` varchar(200) DEFAULT NULL,
-  `content` longtext DEFAULT NULL,
+  `slug` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `headline` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `keywords` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `published_date` datetime DEFAULT NULL,
   `created_date` datetime NOT NULL,
   `updated_date` datetime NOT NULL,
-  `status` enum('draft','publish','revision') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `status` enum('draft','publish','revision') COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -65,13 +66,13 @@ CREATE TABLE `post` (
 
 CREATE TABLE `user` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `role` enum('admin','member') NOT NULL,
-  `email` varchar(40) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(40) NOT NULL,
-  `full_name` varchar(40) NOT NULL,
-  `photo` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `role` enum('admin','member') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `full_name` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `photo` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `user`
