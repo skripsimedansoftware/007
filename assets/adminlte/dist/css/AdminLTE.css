@@ -329,8 +329,8 @@ a:focus {
   display: none;
 }
 .main-header .logo .logo-mini img {
-  max-width: 50px;
-  max-height: 50px;
+  max-width: 60px;
+  max-height: 60px;
 }
 .main-header .logo .logo-mini .brandlogo-image {
   margin-top: 8px;
@@ -600,7 +600,7 @@ a:focus {
   .sidebar-mini.sidebar-collapse .content-wrapper,
   .sidebar-mini.sidebar-collapse .right-side,
   .sidebar-mini.sidebar-collapse .main-footer {
-    margin-left: 50px !important;
+    margin-left: 60px !important;
     z-index: 840;
   }
   .sidebar-mini.sidebar-collapse .main-sidebar {
@@ -608,7 +608,7 @@ a:focus {
     -ms-transform: translate(0, 0);
     -o-transform: translate(0, 0);
     transform: translate(0, 0);
-    width: 50px !important;
+    width: 60px !important;
     z-index: 850;
   }
   .sidebar-mini.sidebar-collapse .sidebar-menu > li {
@@ -639,7 +639,7 @@ a:focus {
     -webkit-transform: translateZ(0);
   }
   .sidebar-mini.sidebar-collapse .main-header .logo {
-    width: 50px;
+    width: 60px;
   }
   .sidebar-mini.sidebar-collapse .main-header .logo > .logo-mini {
     display: block;
@@ -651,7 +651,7 @@ a:focus {
     display: none;
   }
   .sidebar-mini.sidebar-collapse .main-header .navbar {
-    margin-left: 50px;
+    margin-left: 60px;
   }
 }
 @media (min-width: 768px) {
