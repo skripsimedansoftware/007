@@ -63,43 +63,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		border: 1px solid #D0D0D0;
 		box-shadow: 0 0 8px #D0D0D0;
 	}
+
 	</style>
 </head>
 <body>
 
 <div id="container">
-	<h1><?php echo ucfirst(lang('welcome_to')) ?> CodeIgniter!</h1>
-
-	<div id="body">
-		<p><?php echo ucfirst(lang('codeigniter_landing__page_p1')) ?> CodeIgniter.</p>
-
-		<p><?php echo ucfirst(lang('codeigniter_landing__page_p2')) ?>:</p>
-		<code>application/views/welcome_message.php</code>
-
-		<p><?php echo ucfirst(lang('codeigniter_landing__page_p3')) ?>:</p>
-		<code>application/controllers/Welcome.php</code>
-
-		<p><?php echo ucfirst(lang('codeigniter_landing__page_p4')) ?> <a href="user_guide/"><?php echo ucwords(lang('user_guide')) ?></a>.</p>
-		<p><a href="<?php echo base_url('admin') ?>">Login Here</a></p>
-	</div>
-
-	<ul>
-		<li>available languages</li>
-		<ol>
-			<?php foreach ($this->lang->available_languages() as $available_language) : ?>
-			<li><a href="<?php echo language_link($available_language) ?>"><?php echo $available_language ?></a></li>
-			<?php endforeach; ?>
-		</ol>
-		<li>system languages</li>
-		<ol>
-			<?php foreach ($this->lang->system_languages() as $available_language) : ?>
-			<li><a href="<?php echo language_link($available_language) ?>"><?php echo $available_language ?></a></li>
-			<?php endforeach; ?>
-		</ol>
-	</ul>
-
-	<p class="footer"><?php ucfirst(lang('page_rendered_in')) ?> <strong>{elapsed_time}</strong> <?php echo lang('seconds') ?>. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter '.ucfirst(lang('version')).' <strong>' . CI_VERSION . '</strong>' : '' ?></p>
+	<h1>Camera Display</h1>
+	<center>
+	<video id="video" width="auto" height="auto"></video>
+	</center>
 </div>
-
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+if (!('mediaDevices' in navigator)) {
+	navigator.mediaDevices = {}
+}
+
+if (!('getUserMedia' in navigator.mediaDevices)) {
+	navigator.mediaDevices.getUserMedia = function(constraints) {
+		var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+		if (!getUserMedia) {
+			return new Promise.reject(new Error('can get user media'));
+		}
+
+		return new Promise((resolve, reject) => {
+			getUserMedia.call(navigator, constraints, resolve, reject);
+		});
+	}
+}
+
+var html_video = document.getElementById('video');
+navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+	if ('srcObject' in html_video) {
+		html_video.srcObject = stream;
+	} else {
+		html_video.src = window.URL.createObjectURL(stream);
+	}
+
+	html_video.onloadedmetadata = function(e) {
+		html_video.play();
+	}
+}, console.log)
+</script>
 </html>
