@@ -252,6 +252,81 @@ class Admin extends CI_Controller {
 		}
 	}
 
+	public function data_training_name($id = NULL)
+	{
+		if (!empty($id))
+		{
+			$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_name->read(array('id' => $id))->row()));
+		}
+		else
+		{
+			$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_name->read()->result()));
+		}
+	}
+
+	public function add_training_name()
+	{
+		$this->form_validation->set_rules('title', 'Nama', 'trim|required');
+		$this->form_validation->set_rules('status', 'Status', 'trim|required|in_list[active,non-active]');
+
+		if ($this->form_validation->run() == TRUE)
+		{
+			$this->data_training_name->create(array(
+				'title' => $this->input->post('title'),
+				'description' => $this->input->post('description')
+			));
+		}
+		else
+		{
+
+		}
+	}
+
+	public function update_data_training_name($id)
+	{
+		$this->form_validation->set_rules('title', 'Nama', 'trim|required');
+		$this->form_validation->set_rules('status', 'Status', 'trim|required|in_list[active,non-active]');
+
+		if ($this->form_validation->run() == TRUE)
+		{
+
+		}
+		else
+		{
+
+		}
+	}
+
+	public function delete_training_name($id = NULL)
+	{
+		$this->training_name->delete(array('id' => $id));
+		$this->output->set_content_type('application/json')->set_output(json_encode(['status' => 'deleted']));
+	}
+
+	public function delete_training_data($id = NULL)
+	{
+
+	}
+
+	public function data_training_data($data_training_name, $id = NULL)
+	{
+		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_data->read(array('data-training-name' => $data_training_name))->result()));
+	}
+
+	public function add_data_training_data()
+	{
+		$this->form_validation->set_rules('data_training_id', 'Data Training ID', 'trim|required');
+
+		if ($this->form_validation->run() == TRUE)
+		{
+
+		}
+		else
+		{
+
+		}
+	}
+
 	public function email_confirm()
 	{
 		echo 'Confirm Code';
