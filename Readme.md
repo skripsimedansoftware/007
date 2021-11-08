@@ -1,4 +1,13 @@
-# Medan Software - Codeigniter Web :coffee:
+# Medan Software - Codeigniter Web Camera :coffee:
+
+Site Setting
+
+```text
+Google Chrome
+
+chrome://settings/content/siteDetails?site=https://yoursite.ext/
+chrome://settings/content/camera
+```
 
 ## Note!!
 
