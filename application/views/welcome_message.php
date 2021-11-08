@@ -69,21 +69,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
 
 <div id="container">
-	<h1>Camera Display</h1>
+	<h1>Camera Display <button id="opencamera">Open Camera</button></h1>
 	<center>
-	<video id="video" width="auto" height="auto"></video>
+	<video id="video" style="border: 4px solid red;"></video>
 	</center>
 </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
+$(document).on('click', '#opencamera', (function(event) {
+	event.preventDefault();
+	openCamera();
+}));
+
+var video = document.getElementById('video');
+
 if (!('mediaDevices' in navigator)) {
 	navigator.mediaDevices = {}
 }
 
 if (!('getUserMedia' in navigator.mediaDevices)) {
 	navigator.mediaDevices.getUserMedia = function(constraints) {
-		var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+		var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
 		if (!getUserMedia) {
 			return new Promise.reject(new Error('can get user media'));
@@ -95,17 +102,18 @@ if (!('getUserMedia' in navigator.mediaDevices)) {
 	}
 }
 
-var html_video = document.getElementById('video');
-navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
-	if ('srcObject' in html_video) {
-		html_video.srcObject = stream;
-	} else {
-		html_video.src = window.URL.createObjectURL(stream);
-	}
+function openCamera() {
+	navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+		if ('srcObject' in video) {
+			video.srcObject = stream;
+		} else {
+			video.src = window.URL.createObjectURL(stream);
+		}
 
-	html_video.onloadedmetadata = function(e) {
-		html_video.play();
-	}
-}, console.log)
+		video.onloadedmetadata = function(e) {
+			video.play();
+		}
+	}, console.log);
+}
 </script>
 </html>
