@@ -2,10 +2,10 @@
 -- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Oct 21, 2021 at 08:40 PM
--- Server version: 10.4.21-MariaDB
--- PHP Version: 7.3.31
+-- Host: 127.0.0.1
+-- Generation Time: Nov 08, 2021 at 11:57 PM
+-- Server version: 10.4.20-MariaDB
+-- PHP Version: 7.3.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,8 +18,36 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `codeigniter-web`
+-- Database: `extract-color-and-knearest-neighbors`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data-training-data`
+--
+
+CREATE TABLE `data-training-data` (
+  `id` int(8) NOT NULL,
+  `data-training-name` int(4) NOT NULL,
+  `image` text DEFAULT NULL,
+  `red` int(3) NOT NULL DEFAULT 0,
+  `green` int(3) NOT NULL DEFAULT 0,
+  `blue` int(3) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data-training-name`
+--
+
+CREATE TABLE `data-training-name` (
+  `id` int(4) NOT NULL,
+  `title` varchar(40) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('active','non-active') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -86,6 +114,18 @@ INSERT INTO `user` (`id`, `role`, `email`, `username`, `password`, `full_name`, 
 --
 
 --
+-- Indexes for table `data-training-data`
+--
+ALTER TABLE `data-training-data`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `data-training-name`
+--
+ALTER TABLE `data-training-name`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `email_confirm`
 --
 ALTER TABLE `email_confirm`
@@ -106,6 +146,18 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `data-training-data`
+--
+ALTER TABLE `data-training-data`
+  MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `data-training-name`
+--
+ALTER TABLE `data-training-name`
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `email_confirm`
