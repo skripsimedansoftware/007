@@ -133,4 +133,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('data_training_name', 'data_training_data');
+$autoload['model'] = array('data_training_name', 'data_training_image', 'data_training_data');
