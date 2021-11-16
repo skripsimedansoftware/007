@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use Phpml\Classification\KNearestNeighbors;
+
 class Welcome extends CI_Controller {
 
 	/**
@@ -21,5 +23,19 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		$this->load->view('welcome_message');
+
+		// $samples = [[255, 10], [255, 20], [255, 30]];
+		// $labels = ['r', 'g', 'b'];
+
+		// $classifier = new KNearestNeighbors(1);
+		// $classifier->train($samples, $labels);
+		// echo "<pre>";
+		// print_r ($classifier);
+		// echo "</pre>";
+
+		// // echo $classifier->predict([255, 3]);
+		// echo "<pre>";
+		// print_r ($classifier->predict([255, 13]));
+		// echo "</pre>";
 	}
 }

@@ -252,7 +252,13 @@ class Admin extends CI_Controller {
 		}
 	}
 
-	public function data_training_name($id = NULL)
+	public function data_training()
+	{
+		$data['data'] = $this->data_training_name->read()->result();
+		$this->template->load('data_training', $data);
+	}
+
+	public function training_name($id = NULL)
 	{
 		if (!empty($id))
 		{
@@ -267,7 +273,6 @@ class Admin extends CI_Controller {
 	public function add_training_name()
 	{
 		$this->form_validation->set_rules('title', 'Nama', 'trim|required');
-		$this->form_validation->set_rules('status', 'Status', 'trim|required|in_list[active,non-active]');
 
 		if ($this->form_validation->run() == TRUE)
 		{
@@ -275,14 +280,16 @@ class Admin extends CI_Controller {
 				'title' => $this->input->post('title'),
 				'description' => $this->input->post('description')
 			));
+
+			$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => true)));
 		}
 		else
 		{
-
+			$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => false, 'data' => parse_raw_http_request($_POST))));
 		}
 	}
 
-	public function update_data_training_name($id)
+	public function update_training_name($id)
 	{
 		$this->form_validation->set_rules('title', 'Nama', 'trim|required');
 		$this->form_validation->set_rules('status', 'Status', 'trim|required|in_list[active,non-active]');
@@ -303,17 +310,12 @@ class Admin extends CI_Controller {
 		$this->output->set_content_type('application/json')->set_output(json_encode(['status' => 'deleted']));
 	}
 
-	public function delete_training_data($id = NULL)
+	public function training_data($training_name)
 	{
-
+		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_data->read(array('data-training-name' => $training_name))->result()));
 	}
 
-	public function data_training_data($data_training_name, $id = NULL)
-	{
-		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_data->read(array('data-training-name' => $data_training_name))->result()));
-	}
-
-	public function add_data_training_data()
+	public function add_training_data()
 	{
 		$this->form_validation->set_rules('data_training_id', 'Data Training ID', 'trim|required');
 
@@ -325,6 +327,26 @@ class Admin extends CI_Controller {
 		{
 
 		}
+	}
+
+	public function delete_training_data($id = NULL)
+	{
+
+	}
+
+	public function training_image($id = NULL)
+	{
+
+	}
+
+	public function add_training_image($training_name = NULL)
+	{
+		
+	}
+
+	public function delete_training_image($id)
+	{
+
 	}
 
 	public function email_confirm()

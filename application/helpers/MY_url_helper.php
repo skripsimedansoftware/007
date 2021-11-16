@@ -79,5 +79,17 @@ if (!function_exists('get_http_build_query'))
 	}
 }
 
+if (!function_exists('base64image_to_file'))
+{
+	function base64image_to_file($string)
+	{
+		$string = str_replace('data:image/png;base64,', '', $string);
+		$string = str_replace(' ', '+', $string);
+		$data 	= base64_decode($string);
+		$file 	= FCPATH. 'uploads/' . uniqid() . '.png';
+		return file_put_contents($file, $data);
+	}
+}
+
 /* End of file MY_url_helper.php */
 /* Location : ./application/helpers/MY_url_helper.php */

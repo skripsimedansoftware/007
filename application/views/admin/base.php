@@ -77,93 +77,6 @@ desired effect
 			<!-- Navbar Right Menu -->
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
-					<!-- Messages: style can be found in dropdown.less-->
-					<li class="dropdown messages-menu">
-						<!-- Menu toggle button -->
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<i class="fa fa-envelope-o"></i>
-							<span class="label label-success">4</span>
-						</a>
-						<ul class="dropdown-menu">
-							<li class="header">You have 4 messages</li>
-							<li>
-								<!-- inner menu: contains the messages -->
-								<ul class="menu">
-									<li><!-- start message -->
-										<a href="#">
-											<div class="pull-left">
-												<!-- User Image -->
-												<img src="<?php echo (!empty($user->photo))?base_url('uploads/'.$user->photo):base_url('assets/adminlte/dist/img/user2-160x160.jpg') ?>" class="img-circle" alt="User Image">
-											</div>
-											<!-- Message title and timestamp -->
-											<h4>Support Team<small><i class="fa fa-clock-o"></i> 5 mins</small></h4>
-											<!-- The message -->
-											<p>Why not buy a new awesome theme?</p>
-										</a>
-									</li>
-									<!-- end message -->
-								</ul>
-								<!-- /.menu -->
-							</li>
-							<li class="footer"><a href="#">See All Messages</a></li>
-						</ul>
-					</li>
-					<!-- /.messages-menu -->
-
-					<!-- Notifications Menu -->
-					<li class="dropdown notifications-menu">
-						<!-- Menu toggle button -->
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<i class="fa fa-bell-o"></i>
-							<span class="label label-warning">10</span>
-						</a>
-						<ul class="dropdown-menu">
-							<li class="header">You have 10 notifications</li>
-							<li>
-								<!-- Inner Menu: contains the notifications -->
-								<ul class="menu">
-									<li><!-- start notification -->
-										<a href="#"><i class="fa fa-users text-aqua"></i> 5 new members joined today</a>
-									</li>
-									<!-- end notification -->
-								</ul>
-							</li>
-							<li class="footer"><a href="#">View all</a></li>
-						</ul>
-					</li>
-					<!-- Tasks Menu -->
-					<li class="dropdown tasks-menu">
-						<!-- Menu Toggle Button -->
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<i class="fa fa-flag-o"></i>
-							<span class="label label-danger">9</span>
-						</a>
-						<ul class="dropdown-menu">
-							<li class="header">You have 9 tasks</li>
-							<li>
-								<!-- Inner menu: contains the tasks -->
-								<ul class="menu">
-									<li><!-- Task item -->
-										<a href="#">
-											<!-- Task title and progress text -->
-											<h3>Design some buttons <small class="pull-right">20%</small></h3>
-											<!-- The progress bar -->
-											<div class="progress xs">
-												<!-- Change the css width attribute to simulate progress -->
-												<div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-													<span class="sr-only">20% Complete</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<!-- end task item -->
-								</ul>
-							</li>
-							<li class="footer">
-								<a href="#">View all tasks</a>
-							</li>
-						</ul>
-					</li>
 					<!-- User Account Menu -->
 					<li class="dropdown user user-menu">
 						<!-- Menu Toggle Button -->
@@ -248,16 +161,7 @@ desired effect
 				<li class="header">HEADER</li>
 				<!-- Optionally, you can add icons to the links -->
 				<li class="<?php echo $this->router->fetch_method() == 'index'?'active':'' ?>"><a href="<?php echo base_url($this->router->fetch_class()) ?>"><i class="fa fa-home"></i> <span>Home</span></a></li>
-				<li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-				<li class="treeview">
-					<a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
-						<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
-					</a>
-					<ul class="treeview-menu">
-						<li><a href="#">Link in level 2</a></li>
-						<li><a href="#">Link in level 2</a></li>
-					</ul>
-				</li>
+				<li><a href="<?php echo base_url($this->router->fetch_class().'/data_training') ?>"><i class="fa fa-link"></i> <span>Data Training</span></a></li>
 			</ul>
 			<!-- /.sidebar-menu -->
 		</section>
@@ -349,6 +253,92 @@ desired effect
 	immediately after the control sidebar -->
 	<div class="control-sidebar-bg"></div>
 </div>
+
+<!-- add sample -->
+<div class="modal fade" id="modal-add-sample">
+	<div class="modal-dialog">
+		<form id="add-sample" enctype="multipart/form-data">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Tambah Sampel</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Nama</label>
+						<input type="text" name="title" class="form-control" placeholder="Nama Sampel">
+					</div>
+					<div class="form-group">
+						<label>Deskripsi</label>
+						<textarea class="form-control" name="description" placeholder="Deskripsi"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
+					<button type="submit" class="btn btn-primary">Simpan</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- edit sample -->
+<div class="modal fade" id="modal-edit-sample">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Default Modal</h4>
+			</div>
+			<div class="modal-body">
+				<p>One fine body&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
+				<button type="submit" class="btn btn-primary">Simpan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- add data -->
+<div class="modal fade" id="modal-add-data">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Default Modal</h4>
+			</div>
+			<div class="modal-body">
+				<p>One fine body&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
+				<button type="submit" class="btn btn-primary">Simpan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- view data -->
+<div class="modal fade" id="modal-view-data">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Default Modal</h4>
+			</div>
+			<div class="modal-body">
+				<p>One fine body&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
+				<button type="submit" class="btn btn-primary">Simpan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- ./wrapper -->
 
 <!-- REQUIRED JS SCRIPTS -->
@@ -383,6 +373,37 @@ function readURL(input) {
 		reader.readAsDataURL(input.files[0]);
 	}
 }
+
+function getFormData($form){
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i){
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+
+$('#add-sample').on('submit', function(event) {
+	event.preventDefault();
+	var data = new FormData($('#add-sample'));
+	console.log(getFormData(data))
+	// $.ajax({
+	// 	url: '<?php echo base_url($this->router->fetch_class().'/add_training_name'); ?>',
+	// 	type: 'POST',
+	// 	dataType: 'JSON',
+	// 	processData: false,
+	// 	cache: false,
+	// 	data: data,
+	// 	success: function(data) {
+	// 		console.log(data)
+	// 	},
+	// 	error: function(error) {
+	// 		console.log(error)
+	// 	}
+	// });
+});
 
 $('.datatable').DataTable();
 </script>
