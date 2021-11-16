@@ -285,68 +285,89 @@ class Admin extends CI_Controller {
 		}
 		else
 		{
-			$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => false, 'data' => parse_raw_http_request($_POST))));
+			$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => false, 'data' => $this->form_validation->error_array())));
 		}
 	}
 
 	public function update_training_name($id)
 	{
 		$this->form_validation->set_rules('title', 'Nama', 'trim|required');
-		$this->form_validation->set_rules('status', 'Status', 'trim|required|in_list[active,non-active]');
 
 		if ($this->form_validation->run() == TRUE)
 		{
+			$this->data_training_name->update(array(
+				'title' => $this->input->post('title'),
+				'description' => $this->input->post('description')
+			), array('id' => $id));
 
+			$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => true)));
 		}
 		else
 		{
-
+			$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => false, 'data' => $this->form_validation->error_array())));
 		}
 	}
 
 	public function delete_training_name($id = NULL)
 	{
-		$this->training_name->delete(array('id' => $id));
-		$this->output->set_content_type('application/json')->set_output(json_encode(['status' => 'deleted']));
-	}
+		$data_training_images = array_map(function($data) {
+			return $data['id'];
+		}, $this->data_training_image->read(array('data-training-name' => $id))->result_array());
 
-	public function training_data($training_name)
-	{
-		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_data->read(array('data-training-name' => $training_name))->result()));
-	}
-
-	public function add_training_data()
-	{
-		$this->form_validation->set_rules('data_training_id', 'Data Training ID', 'trim|required');
-
-		if ($this->form_validation->run() == TRUE)
+		// get training data by training images
+		$data_training_data = $this->data_training_data->read_in('data-training-image', $data_training_images);
+		if (!empty($data_training_data->result_array()))
 		{
+			$data_training_data = array_map(function($data) {
+				return $data['id'];
+			}, $data_training_data->result_array());
 
+			// delete training data by training id
+			$this->data_training_data->delete_in('id', $data_training_data);
 		}
-		else
+
+		$this->data_training_image->delete(array('data-training-name' => $id));
+		$this->data_training_name->delete(array('id' => $id));
+		$this->output->set_content_type('application/json')->set_output(json_encode(['deleted' => true]));
+	}
+
+	public function training_image($training_name)
+	{
+		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_image->read(array('data-training-name' => $training_name))->result()));
+	}
+
+	public function training_data($training_image)
+	{
+		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_data->read(array('data-training-image' => $training_image))->result()));
+	}
+
+	public function add_training_image($training_name)
+	{
+		$file = random_string('alnum', 12).'.png';
+		$data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $this->input->post('image')));
+		file_put_contents(FCPATH.'uploads/'.$file, $data);
+		$insert_id = $this->data_training_image->create(array(
+			'data-training-name' => $training_name,
+			'image' => $file,
+			'json' => $this->input->post('json')
+		), TRUE);
+
+		$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => true, 'data-training-image' => $insert_id)));
+	}
+
+	public function add_training_data($training_image)
+	{
+		foreach ($this->input->post('color') as $color)
 		{
-
+			$this->data_training_data->create(array(
+				'data-training-image' => $training_image,
+				'red' => $color[0],
+				'green' => $color[1],
+				'blue' => $color[2]
+			));
 		}
-	}
 
-	public function delete_training_data($id = NULL)
-	{
-
-	}
-
-	public function training_image($id = NULL)
-	{
-
-	}
-
-	public function add_training_image($training_name = NULL)
-	{
-		
-	}
-
-	public function delete_training_image($id)
-	{
-
+		$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => true)));
 	}
 
 	public function email_confirm()

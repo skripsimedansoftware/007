@@ -98,9 +98,17 @@ class MY_Model extends \CI_Model
 	 * @param      array   $data
 	 * @return     object
 	 */
-	public function create($data = array())
+	public function create($data = array(), $return = FALSE)
 	{
-		return $this->db->insert($this->table, $data);
+		if ($return)
+		{
+			$this->db->insert($this->table, $data);
+			return $this->db->insert_id();
+		}
+		else
+		{
+			return $this->db->insert($this->table, $data);
+		}
 	}
 
 	/**

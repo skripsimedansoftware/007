@@ -164,9 +164,8 @@
 		<div class="header clearfix">
 			<nav>
 				<ul class="nav nav-pills pull-right">
-					<li class="<?php echo $this->router->fetch_method() == 'index'?'active':'' ?>"><a href="<?php echo base_url('welcome/index') ?>">Home</a></li>
-					<li class="<?php echo $this->router->fetch_method() == 'about'?'active':'' ?>"><a href="<?php echo base_url('welcome/about') ?>">About</a></li>
-					<li class="<?php echo $this->router->fetch_method() == 'login'?'active':'' ?>"><a href="<?php echo base_url('admin') ?>">Login</a></li>
+					<li class="<?php echo $this->router->fetch_method() == 'index'?'active':'' ?>"><a href="<?php echo base_url('welcome/index') ?>">Beranda</a></li>
+					<li class="<?php echo $this->router->fetch_method() == 'login'?'active':'' ?>"><a href="<?php echo base_url('admin') ?>">Masuk</a></li>
 				</ul>
 			</nav>
 			<h3 class="text-muted">Skripsi</h3>
@@ -188,9 +187,9 @@
 </body>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
-<script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+<!-- <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script> -->
 <script type="text/javascript">
-console.log('ml5 version:', ml5.version);
+// console.log('ml5 version:', ml5.version);
 function drawCanvas(canvas, img) {
 	canvas.width = getComputedStyle(canvas).width.split('px')[0];
 	canvas.height = getComputedStyle(canvas).height.split('px')[0];
@@ -259,7 +258,6 @@ $(document).on('click', '.open-camera', function(event) {
 	event.preventDefault();
 	$('.jumbotron').empty();
 	$('.jumbotron').append('<div id="element-with-background-image"><div align="center" class="embed-responsive embed-responsive-16by9"><video id="video" autoplay loop class="embed-responsive-item"></video></div><div id="color-overlay"></div></div>');
-	$('.jumbotron').append(button_element.button_stop_camera).css('z-index', 1000)
 
 	var camera_type = $(this).attr('camera-type');
 	if (camera_type == 'front') {
@@ -281,16 +279,9 @@ $(document).on('click', '.open-camera', function(event) {
 			var mediaStreamTrack = stream.getVideoTracks()[0];
 			var imageCapture = new ImageCapture(mediaStreamTrack);
 
-			$(document).on('click', '.close-camera', function(event) {
-				event.preventDefault();
-				stream.getTracks().forEach(function(track) {
-					track.stop();
-					draw_html();
-					$('#palettes').empty();
-				});
-			});
+			$('.jumbotron').append(button_element.button_stop_camera).css('z-index', 1000);
 
-			setInterval(function() {
+			var capture_color = setInterval(function() {
 				imageCapture.grabFrame().then(imageBitmap => {
 					const canvas = document.getElementById('canvas');
 					canvas.width = imageBitmap.width;
@@ -311,6 +302,16 @@ $(document).on('click', '.open-camera', function(event) {
 				})
 				.catch(console.log);
 			}, 1000);
+
+			$(document).on('click', '.close-camera', function(event) {
+				event.preventDefault();
+				stream.getTracks().forEach(function(track) {
+					track.stop();
+					clearInterval(capture_color);
+					draw_html();
+					$('#palettes').empty();
+				});
+			});
 
 			video.onloadedmetadata = function(e) {
 				video.play();

@@ -29,7 +29,7 @@
 					</div>
 					<div class="form-group">
 						<img  class="img img-responsive img-circle" id="profile-upload-preview" src="<?php echo (!empty($profile->photo))?base_url('uploads/'.$profile->photo):base_url('assets/adminlte/dist/img/user2-160x160.jpg') ?>" alt="your image" style="margin-bottom: 2%; height:160px;width: 160px;">
-						<input type="file" onchange="readURL(this);" name="photo">
+						<input type="file" onchange="readURL(this, '#profile-upload-preview');" name="photo">
 					</div>
 				</div>
 			</div>

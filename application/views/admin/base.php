@@ -267,10 +267,12 @@ desired effect
 					<div class="form-group">
 						<label>Nama</label>
 						<input type="text" name="title" class="form-control" placeholder="Nama Sampel">
+						<span class="help-block error"></span>
 					</div>
 					<div class="form-group">
 						<label>Deskripsi</label>
 						<textarea class="form-control" name="description" placeholder="Deskripsi"></textarea>
+						<span class="help-block error"></span>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -285,38 +287,63 @@ desired effect
 <!-- edit sample -->
 <div class="modal fade" id="modal-edit-sample">
 	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Default Modal</h4>
+		<form id="edit-sample" enctype="multipart/form-data">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Edit Sampel</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Nama</label>
+						<input type="text" name="title" class="form-control" placeholder="Nama Sampel">
+						<span class="help-block error"></span>
+					</div>
+					<div class="form-group">
+						<label>Deskripsi</label>
+						<textarea class="form-control" name="description" placeholder="Deskripsi"></textarea>
+						<span class="help-block error"></span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
+					<button type="submit" class="btn btn-primary">Simpan</button>
+				</div>
 			</div>
-			<div class="modal-body">
-				<p>One fine body&hellip;</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
-				<button type="submit" class="btn btn-primary">Simpan</button>
-			</div>
-		</div>
+		</form>
 	</div>
 </div>
 
 <!-- add data -->
 <div class="modal fade" id="modal-add-data">
 	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Default Modal</h4>
+		<form id="add-sample-image">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Tambah Data Training</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-12">
+							<h3>Pilih Gambar</h3>
+							<div class="form-group">
+								<img class="hidden img-responsive" id="choosen-image">
+							</div>
+							<div class="form-group">
+								<input type="file" accept="image/*" class="form-control" id="choose-image">
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-success btn-block hidden" id="upload-choosen-image">Unggah Gambar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Batal</button>
+				</div>
 			</div>
-			<div class="modal-body">
-				<p>One fine body&hellip;</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
-				<button type="submit" class="btn btn-primary">Simpan</button>
-			</div>
-		</div>
+		</form>
 	</div>
 </div>
 
@@ -360,19 +387,181 @@ desired effect
 <!-- DataTables -->
 <script src="<?php echo base_url('assets/plugins/') ?>DataTables/datatables.min.js"></script>
 
+<!-- ML5.js -->
+<script src="<?php echo base_url('assets/plugins/') ?>ML5.js/ml5.min.js"></script>
+
+<script src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
+
 <!-- AdminLTE App -->
 <script src="<?php echo base_url('assets/adminlte/') ?>dist/js/adminlte.min.js"></script>
 
 <script type="text/javascript">
-function readURL(input) {
+if (!Object.prototype.watch) {
+ Object.defineProperty(
+   Object.prototype,
+   "watch", {
+     enumerable: false,
+     configurable: true,
+     writable: false,
+     value: function (prop, handler) {
+       var old = this[prop];
+       var cur = old;
+       var getter = function () {
+          return cur;
+       };
+       var setter = function (val) {
+        old = cur;
+        cur =
+          handler.call(this,prop,old,val);
+        return cur;
+       };
+ 
+       // can't watch constants
+       if (delete this[prop]) {
+        Object.defineProperty(this,prop,{
+            get: getter,
+            set: setter,
+            enumerable: true,
+            configurable: true
+        });
+       }
+    }
+ });
+}
+
+function readURL(input, element) {
 	if (input.files && input.files[0]) {
 		var reader = new FileReader();
 		reader.onload = function (e) {
-			$('#profile-upload-preview').attr('src', e.target.result);
+			$(element).attr('src', e.target.result);
 		}
 		reader.readAsDataURL(input.files[0]);
 	}
 }
+
+window.knnready = false;
+window.knnClassifier;
+window.featureExtractor;
+
+function readyToUse() {
+	window.knnready = true;
+}
+
+$('#modal-add-data').on('show.bs.modal', function (e) {
+	console.log('bootstrap swhown')
+	if (knnready === false) {
+		window.knnClassifier = ml5.KNNClassifier();
+		window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
+	}
+});
+
+function saveData() {
+	const dataset = knnClassifier.getClassifierDataset();
+	if (knnClassifier.mapStringToIndex.length > 0) {
+		Object.keys(dataset).forEach((key) => {
+			if (knnClassifier.mapStringToIndex[key]) {
+				dataset[key].label = knnClassifier.mapStringToIndex[key];
+			}
+		});
+	}
+
+	const tensors = Object.keys(dataset).map((key) => {
+		const t = dataset[key];
+		if (t) {
+			return t.dataSync();
+		}
+		return null;
+	});
+
+	return JSON.stringify({ dataset, tensors });
+}
+
+$('#choose-image').on('change', (event) => {
+	function run() {
+		if (event.target.files.length > 0)
+		{
+			// var image = URL.createObjectURL(event.target.files[0]);
+			// $('#choosen-image').removeClass('hidden').attr('src', image);
+			var data_id =  $($($('#add-sample-image')[0]).children('input')[0]).val();
+			var label = $($($('#add-sample-image')[0]).children('input')[1]).val();
+
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				$('#choosen-image').removeClass('hidden').attr('src', e.target.result);
+				// $('#upload-choosen-image').removeClass('hidden');
+
+				var image = new Image();
+				var colorThief = new ColorThief();
+				// var colorArray = colorThief.getPalette(image, 16);
+				// console.log(colorArray)
+
+				var colorArray = new Array();
+				image.addEventListener('load', function() {
+					colorArray = colorThief.getPalette(image, 16);
+				});
+
+				image.src = e.target.result;
+
+
+				var image_result = e.target.result;
+
+				knnClassifier.addExample(featureExtractor.infer($('#choosen-image')[0]), label);
+
+				$.ajax({
+					url: '<?php echo base_url($this->router->fetch_class().'/add_training_image/') ?>'+data_id,
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						image: image_result,
+						json: saveData()
+					},
+					success: function(data) {
+						$.ajax({
+							url: '<?php echo base_url($this->router->fetch_class().'/add_training_data/') ?>'+data['data-training-image'],
+							type: 'POST',
+							dataType: 'JSON',
+							data: {
+								color: colorArray
+							},
+							success: function(data) {
+								console.log(data)
+							},
+							error: function(error) {
+								console.log(error)
+							}
+						});
+
+						// show action
+						$('#choosen-image').addClass('hidden');
+						$('#add-sample-image')[0].reset();
+						Swal.fire('Selesai!', 'Data sudah diserap!', 'success');
+					},
+					error: function(error) {
+						console.log(error)
+					}
+				});
+
+				// $('#add-sample-image').on('submit', function(event) {
+				// 	event.preventDefault();
+				// });
+			}
+
+			reader.readAsDataURL(event.target.files[0]);
+		}
+		else
+		{
+			$('#choosen-image').addClass('hidden');
+		}
+	}
+
+	if (knnready === false) {
+		window.watch('knnready', function(changes) {
+			run();
+		});
+	} else {
+		run();
+	}
+});
 
 function getFormData($form){
 	var unindexed_array = $form.serializeArray();
@@ -385,27 +574,159 @@ function getFormData($form){
 	return indexed_array;
 }
 
+function validation_errors(form, data) {
+	// reset form if data undefined
+	if (data == undefined) {
+		form[0].reset();
+	}
+
+	// show error on data
+	$.each(form.find('.form-group'), function(index, el) {
+		var child_element = $(el).children();
+		$(child_element[2]).text('');
+		if (data !== undefined) {
+			Object.keys(data).forEach((el, index) => {
+				if (el == $(child_element[1]).attr('name'))
+				{
+					$(child_element[2]).text(data[el]);
+				}
+			});
+		}
+	});
+}
+
+function fill_form(form, data) {
+	$.each(form.find('.form-group'), function(index, el) {
+		var child_element = $(el).children();
+		if (data !== undefined) {
+			Object.keys(data).forEach((el, index) => {
+				if (el == $(child_element[1]).attr('name'))
+				{
+					$(child_element[1]).val(data[el]);
+				}
+			});
+		}
+	});
+}
+
 $('#add-sample').on('submit', function(event) {
 	event.preventDefault();
-	var data = new FormData($('#add-sample'));
-	console.log(getFormData(data))
-	// $.ajax({
-	// 	url: '<?php echo base_url($this->router->fetch_class().'/add_training_name'); ?>',
-	// 	type: 'POST',
-	// 	dataType: 'JSON',
-	// 	processData: false,
-	// 	cache: false,
-	// 	data: data,
-	// 	success: function(data) {
-	// 		console.log(data)
-	// 	},
-	// 	error: function(error) {
-	// 		console.log(error)
-	// 	}
-	// });
+	var _this_form = $(this);
+	var data = getFormData(_this_form);
+	$.ajax({
+		url: '<?php echo base_url($this->router->fetch_class().'/add_training_name'); ?>',
+		type: 'POST',
+		dataType: 'JSON',
+		data: data,
+		success: function(data) {
+			if (data.saved) {
+				validation_errors(_this_form);
+				$('#modal-add-sample').modal('toggle');
+				window.location.reload();
+			} else {
+				validation_errors(_this_form, data.data);
+			}
+		},
+		error: function(error) {
+			console.log(error)
+		}
+	});
 });
 
-$('.datatable').DataTable();
+$('#edit-sample').on('submit', function(event) {
+	event.preventDefault();
+	var _this_form = $(this);
+	var data = getFormData(_this_form);
+	$.ajax({
+		url: '<?php echo base_url($this->router->fetch_class().'/update_training_name/'); ?>'+data.data_id,
+		type: 'POST',
+		dataType: 'JSON',
+		data: data,
+		success: function(data) {
+			if (data.saved) {
+				validation_errors(_this_form);
+				$('#modal-edit-sample').modal('toggle');
+				window.location.reload();
+			} else {
+				validation_errors(_this_form, data.data);
+			}
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	});
+});
+
+$(document).on('click', '.btn-data-training-option', function(event) {
+	event.preventDefault();
+	var _this_btn = $(this);
+	var _data_id = $(this).attr('data-id');
+	var _data_option = $(this).attr('data-option');
+	switch (_data_option) {
+		case 'add':
+			$.ajax({
+				url: '<?php echo base_url($this->router->fetch_class().'/training_name'); ?>/'+_data_id,
+				type: 'GET',
+				dataType: 'JSON',
+				success: function(data) {
+					$('#modal-add-data').modal('toggle');
+					if ($($('#add-sample-image')[0]).children('input').length == 0) {
+						$($('#add-sample-image')[0]).prepend('<input type="hidden" name="data_label" value="'+data.title+'">');
+						$($('#add-sample-image')[0]).prepend('<input type="hidden" name="data_id" value="'+data.id+'">');
+					} else {
+						$($($('#add-sample-image')[0]).children('input')[0]).val(data.id);
+						$($($('#add-sample-image')[0]).children('input')[1]).val(data.title);
+					}
+				},
+				error: function(error) {
+					console.log(error)
+				}
+			});
+		break;
+
+		case 'view':
+
+		break;
+
+		case 'edit':
+			$.ajax({
+				url: '<?php echo base_url($this->router->fetch_class().'/training_name'); ?>/'+_data_id,
+				type: 'GET',
+				dataType: 'JSON',
+				success: function(data) {
+					$('#modal-edit-sample').modal('toggle');
+					if ($($('#edit-sample')[0]).children('input').length < 1) {
+						$($('#edit-sample')[0]).prepend('<input type="hidden" name="data_id" value="'+_data_id+'">');
+					} else {
+						$($('#edit-sample')[0]).children('input').val(_data_id);
+					}
+					fill_form($('#edit-sample'), data);
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		break;
+
+		default :
+			$.ajax({
+				url: '<?php echo base_url($this->router->fetch_class().'/delete_training_name'); ?>/'+_data_id,
+				type: 'GET',
+				dataType: 'JSON',
+				success: function(data) {
+					_this_btn.parent().parent().remove();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		break;
+	}
+});
+
+$('.datatable').DataTable({
+	responsive: true
+});
 </script>
 </body>
 </html>
