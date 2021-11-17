@@ -10,7 +10,7 @@ class Admin extends CI_Controller {
 		$this->load->model('user');
 		if (empty($this->session->userdata($this->router->fetch_class())))
 		{
-			if (!in_array($this->router->fetch_method(), ['login', 'register', 'forgot_password', 'reset_password']))
+			if (!in_array($this->router->fetch_method(), ['login', 'register', 'forgot_password', 'reset_password', 'try']))
 			{
 				redirect(base_url($this->router->fetch_class().'/login'), 'refresh');
 			}
@@ -19,7 +19,10 @@ class Admin extends CI_Controller {
 
 	public function index()
 	{
-		$this->template->load('home');
+		$data['training_name'] = $this->data_training_name->read()->num_rows();
+		$data['training_image'] = $this->data_training_image->read()->num_rows();
+		$data['training_color'] = $this->data_training_data->read()->num_rows();
+		$this->template->load('home', $data);
 	}
 
 	public function login()
@@ -348,8 +351,7 @@ class Admin extends CI_Controller {
 		file_put_contents(FCPATH.'uploads/'.$file, $data);
 		$insert_id = $this->data_training_image->create(array(
 			'data-training-name' => $training_name,
-			'image' => $file,
-			'json' => $this->input->post('json')
+			'image' => $file
 		), TRUE);
 
 		$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => true, 'data-training-image' => $insert_id)));
@@ -368,6 +370,11 @@ class Admin extends CI_Controller {
 		}
 
 		$this->output->set_content_type('application/json')->set_output(json_encode(array('saved' => true)));
+	}
+
+	public function try()
+	{
+		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_name->try()->result()));
 	}
 
 	public function email_confirm()

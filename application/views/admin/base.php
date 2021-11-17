@@ -387,48 +387,12 @@ desired effect
 <!-- DataTables -->
 <script src="<?php echo base_url('assets/plugins/') ?>DataTables/datatables.min.js"></script>
 
-<!-- ML5.js -->
-<script src="<?php echo base_url('assets/plugins/') ?>ML5.js/ml5.min.js"></script>
-
 <script src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
 
 <!-- AdminLTE App -->
 <script src="<?php echo base_url('assets/adminlte/') ?>dist/js/adminlte.min.js"></script>
 
 <script type="text/javascript">
-if (!Object.prototype.watch) {
- Object.defineProperty(
-   Object.prototype,
-   "watch", {
-     enumerable: false,
-     configurable: true,
-     writable: false,
-     value: function (prop, handler) {
-       var old = this[prop];
-       var cur = old;
-       var getter = function () {
-          return cur;
-       };
-       var setter = function (val) {
-        old = cur;
-        cur =
-          handler.call(this,prop,old,val);
-        return cur;
-       };
- 
-       // can't watch constants
-       if (delete this[prop]) {
-        Object.defineProperty(this,prop,{
-            get: getter,
-            set: setter,
-            enumerable: true,
-            configurable: true
-        });
-       }
-    }
- });
-}
-
 function readURL(input, element) {
 	if (input.files && input.files[0]) {
 		var reader = new FileReader();
@@ -439,127 +403,69 @@ function readURL(input, element) {
 	}
 }
 
-window.knnready = false;
-window.knnClassifier;
-window.featureExtractor;
-
-function readyToUse() {
-	window.knnready = true;
-}
-
-$('#modal-add-data').on('show.bs.modal', function (e) {
-	console.log('bootstrap swhown')
-	if (knnready === false) {
-		window.knnClassifier = ml5.KNNClassifier();
-		window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
-	}
-});
-
-function saveData() {
-	const dataset = knnClassifier.getClassifierDataset();
-	if (knnClassifier.mapStringToIndex.length > 0) {
-		Object.keys(dataset).forEach((key) => {
-			if (knnClassifier.mapStringToIndex[key]) {
-				dataset[key].label = knnClassifier.mapStringToIndex[key];
-			}
-		});
-	}
-
-	const tensors = Object.keys(dataset).map((key) => {
-		const t = dataset[key];
-		if (t) {
-			return t.dataSync();
-		}
-		return null;
-	});
-
-	return JSON.stringify({ dataset, tensors });
-}
-
 $('#choose-image').on('change', (event) => {
-	function run() {
-		if (event.target.files.length > 0)
-		{
-			// var image = URL.createObjectURL(event.target.files[0]);
-			// $('#choosen-image').removeClass('hidden').attr('src', image);
-			var data_id =  $($($('#add-sample-image')[0]).children('input')[0]).val();
-			var label = $($($('#add-sample-image')[0]).children('input')[1]).val();
+	if (event.target.files.length > 0)
+	{
+		// var image = URL.createObjectURL(event.target.files[0]);
+		// $('#choosen-image').removeClass('hidden').attr('src', image);
+		var data_id =  $($($('#add-sample-image')[0]).children('input')[0]).val();
+		var label = $($($('#add-sample-image')[0]).children('input')[1]).val();
 
-			var reader = new FileReader();
-			reader.onload = function (e) {
-				$('#choosen-image').removeClass('hidden').attr('src', e.target.result);
-				// $('#upload-choosen-image').removeClass('hidden');
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			$('#choosen-image').removeClass('hidden').attr('src', e.target.result);
+			// $('#upload-choosen-image').removeClass('hidden');
 
-				var image = new Image();
-				var colorThief = new ColorThief();
-				// var colorArray = colorThief.getPalette(image, 16);
-				// console.log(colorArray)
+			var image_result = e.target.result;
+			var image = new Image();
+			var colorThief = new ColorThief();
+			// var colorArray = colorThief.getPalette(image, 16);
+			// console.log(colorArray)
 
-				var colorArray = new Array();
-				image.addEventListener('load', function() {
-					colorArray = colorThief.getPalette(image, 16);
-				});
+			var colorArray = new Array();
+			image.addEventListener('load', function() {
+				colorArray = colorThief.getPalette(image, 16);
+			});
 
-				image.src = e.target.result;
+			image.src = image_result;
 
+			$.ajax({
+				url: '<?php echo base_url($this->router->fetch_class().'/add_training_image/') ?>'+data_id,
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					image: image_result
+				},
+				success: function(data) {
+					$.ajax({
+						url: '<?php echo base_url($this->router->fetch_class().'/add_training_data/') ?>'+data['data-training-image'],
+						type: 'POST',
+						dataType: 'JSON',
+						data: {
+							color: colorArray
+						},
+						success: function(data) {
+							$('#choosen-image').addClass('hidden');
+							$('#add-sample-image')[0].reset();
+							Swal.fire('Selesai!', 'Data sudah diserap!', 'success');
+						},
+						error: function(error) {
+							console.log(error)
+						}
+					});
+				},
+				error: function(error) {
+					console.log(error)
+				}
+			});
 
-				var image_result = e.target.result;
-
-				knnClassifier.addExample(featureExtractor.infer($('#choosen-image')[0]), label);
-
-				$.ajax({
-					url: '<?php echo base_url($this->router->fetch_class().'/add_training_image/') ?>'+data_id,
-					type: 'POST',
-					dataType: 'JSON',
-					data: {
-						image: image_result,
-						json: saveData()
-					},
-					success: function(data) {
-						$.ajax({
-							url: '<?php echo base_url($this->router->fetch_class().'/add_training_data/') ?>'+data['data-training-image'],
-							type: 'POST',
-							dataType: 'JSON',
-							data: {
-								color: colorArray
-							},
-							success: function(data) {
-								console.log(data)
-							},
-							error: function(error) {
-								console.log(error)
-							}
-						});
-
-						// show action
-						$('#choosen-image').addClass('hidden');
-						$('#add-sample-image')[0].reset();
-						Swal.fire('Selesai!', 'Data sudah diserap!', 'success');
-					},
-					error: function(error) {
-						console.log(error)
-					}
-				});
-
-				// $('#add-sample-image').on('submit', function(event) {
-				// 	event.preventDefault();
-				// });
-			}
-
-			reader.readAsDataURL(event.target.files[0]);
 		}
-		else
-		{
-			$('#choosen-image').addClass('hidden');
-		}
+
+		reader.readAsDataURL(event.target.files[0]);
 	}
-
-	if (knnready === false) {
-		window.watch('knnready', function(changes) {
-			run();
-		});
-	} else {
-		run();
+	else
+	{
+		$('#choosen-image').addClass('hidden');
 	}
 });
 

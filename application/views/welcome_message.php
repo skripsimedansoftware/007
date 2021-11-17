@@ -187,9 +187,76 @@
 </body>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
-<!-- <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script> -->
+<!-- ML5.js -->
+<script src="<?php echo base_url('assets/plugins/') ?>ML5.js/ml5.min.js"></script>
 <script type="text/javascript">
-// console.log('ml5 version:', ml5.version);
+if (!Object.prototype.watch) {
+	Object.defineProperty(Object.prototype,"watch", {
+		enumerable: false,
+		configurable: true,
+		writable: false,
+		value: function (prop, handler) {
+			var old = this[prop];
+			var cur = old;
+			var getter = function () {
+				return cur;
+			};
+			var setter = function (val) {
+				old = cur;
+				cur =
+				handler.call(this,prop,old,val);
+				return cur;
+			};
+
+			if (delete this[prop]) {
+				Object.defineProperty(this,prop,{
+					get: getter,
+					set: setter,
+					enumerable: true,
+					configurable: true
+				});
+			}
+		}
+	});
+}
+
+var find_value = (arrayName, searchKey, searchValue) => {
+	let find = arrayName.findIndex(i => i[searchKey] == searchValue);
+	return (find !== -1)?find:false;
+}
+
+window.knnready = false;
+
+window.knnClassifier = ml5.KNNClassifier();
+window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
+
+function readyToUse() {
+	draw_html();
+	window.knnready = true;
+	$.ajax({
+		url: '<?php echo base_url('admin/try') ?>',
+		type: 'GET',
+		dataType: 'JSON',
+		success: function(data) {
+			$.each(data, function(index, val) {
+				var temp_image = new Image();
+				temp_image.src = '<?php echo base_url('uploads/'); ?>'+val.image;
+
+				temp_image.onload = function() {
+					var img = new Image(this.width, this.height);
+					img.onload = function() {
+						console.log(window.knnClassifier.addExample(featureExtractor.infer(img), val.title));
+					}
+					img.src = '<?php echo base_url('uploads/'); ?>'+val.image;
+				}
+			});
+		},
+		error: function(error) {
+
+		}
+	});
+}
+
 function drawCanvas(canvas, img) {
 	canvas.width = getComputedStyle(canvas).width.split('px')[0];
 	canvas.height = getComputedStyle(canvas).height.split('px')[0];
@@ -250,10 +317,6 @@ function draw_html() {
 	$('.jumbotron').html(html_element);
 }
 
-$(document).ready(function() {
-	draw_html();
-});
-
 $(document).on('click', '.open-camera', function(event) {
 	event.preventDefault();
 	$('.jumbotron').empty();
@@ -266,7 +329,7 @@ $(document).on('click', '.open-camera', function(event) {
 		openCamera('environment');
 	}
 	var video = document.getElementById('video');
-	$('.jumbotron').prepend('<h3 style="margin-top:-4%">KONDISI ALPUKAT</h3>')
+	$('.jumbotron').prepend('<h3 style="margin-top:-4%" id="result-label">KONDISI ALPUKAT</h3>')
 
 	function openCamera(type) {
 		navigator.mediaDevices.getUserMedia({ video: { facingMode: type }, audio: false }).then(stream => {
@@ -294,6 +357,15 @@ $(document).on('click', '.open-camera', function(event) {
 					image.addEventListener('load', function() {
 						var colorThief = new ColorThief();
 						var colorArray = colorThief.getPalette(image, 16);
+
+						if (knnready) {
+							const features = featureExtractor.infer(image);
+							// Use KNN Classifier to classify these features
+							knnClassifier.classify(features, (err, result) => {
+								$('#result-label').text(result.label);
+							});
+						}
+
 						$('#palettes').empty();
 						colorArray.forEach((el, index) => {
 							$('#palettes').append('<div class="col-lg-1 palette" style="background-color: rgb('+el[0]+', '+el[1]+', '+el[2]+'); height: 200px; width: 200px; float:left;"></div>');

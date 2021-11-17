@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 16, 2021 at 11:36 PM
+-- Generation Time: Nov 17, 2021 at 09:15 PM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 7.3.29
 
@@ -44,8 +44,7 @@ CREATE TABLE `data-training-data` (
 CREATE TABLE `data-training-image` (
   `id` int(4) NOT NULL,
   `data-training-name` int(4) NOT NULL,
-  `image` varchar(16) NOT NULL,
-  `json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`json`))
+  `image` varchar(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

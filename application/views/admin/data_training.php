@@ -4,7 +4,7 @@
 			<h3 class="box-title">Data Training</h3>
 		</div>
 		<div class="box-body">
-			<table class="datatable">
+			<table class="table table-responsive table-hover table-striped datatable">
 				<thead>
 					<th>No</th>
 					<th>Nama</th>
@@ -29,7 +29,7 @@
 						<td><?php echo $value->title ?></td>
 						<td><?php echo strlen($value->description) > 0 ? $value->description : '-' ?></td>
 						<td><?php echo $data_training_image->num_rows() ?></td>
-						<td><?php echo $data_training_data->num_rows() ?></td>
+						<td><?php echo ($data_training_data)?$data_training_data->num_rows():0 ?></td>
 						<td>
 							<button class="btn btn-data-training-option btn-xs btn-primary" data-option="add" data-id="<?php echo $value->id ?>" data-toggle="tooltip" data-placement="top" title="Tambah Sampel Data"><i class="fa fa-plus"></i></button>
 							<button class="btn btn-data-training-option btn-xs btn-warning" data-option="edit" data-id="<?php echo $value->id ?>" data-toggle="tooltip" data-placement="top" title="Edit Sampel Data"><i class="fa fa-edit"></i></button>

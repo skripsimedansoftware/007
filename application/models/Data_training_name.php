@@ -15,6 +15,14 @@ class Data_training_name extends MY_Model
 		parent::__construct();
 		$this->set_table('data-training-name');
 	}
+
+	public function try()
+	{
+		$this->db->select('*');
+		$this->db->from($this->table);
+		$this->db->join('data-training-image', 'data-training-image.data-training-name = data-training-name.id');
+		return $this->db->get();
+	}
 }
 
 /* End of file Data_training_name.php */
