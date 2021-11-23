@@ -31,6 +31,21 @@
 		/*height: auto;*/
 	}
 
+	.palette {
+		background-color: red;
+		min-height: 30px;
+		min-width: 4%;
+		max-height: 30px;
+		max-width: 6%;
+		line-height: 35px;
+		display: flex;
+		justify-content: center;
+		border: 1px solid black;
+		float: left;
+		margin-left: 1.3px;
+		margin-top: 1.8px;
+	}
+
 	.swal2-popup { font-size: 1.6rem !important; }
 	</style>
 </head>
@@ -63,9 +78,9 @@ desired effect
 		<!-- Logo -->
 		<a href="<?php echo base_url() ?>" target="_blank" class="logo">
 			<!-- mini logo for sidebar mini 50x50 pixels -->
-			<span class="logo-mini"><b>A</b>LT</span>
+			<span class="logo-mini"><b>UIN</b>SU</span>
 			<!-- logo for regular state and mobile devices -->
-			<span class="logo-lg"><b>Admin</b>LTE</span>
+			<span class="logo-lg"><b>UINSU</b> ILKOM</span>
 		</a>
 
 		<!-- Header Navbar -->
@@ -91,24 +106,8 @@ desired effect
 							<li class="user-header">
 								<img src="<?php echo (!empty($user->photo))?base_url('uploads/'.$user->photo):base_url('assets/adminlte/dist/img/user2-160x160.jpg') ?>" class="img-circle" alt="User Image">
 								<p>
-									<?php echo $user->full_name ?> - Web Developer
-									<small>Member since Nov. 2012</small>
+									<?php echo $user->full_name ?>
 								</p>
-							</li>
-							<!-- Menu Body -->
-							<li class="user-body">
-								<div class="row">
-									<div class="col-xs-4 text-center">
-										<a href="#">Followers</a>
-									</div>
-									<div class="col-xs-4 text-center">
-										<a href="#">Sales</a>
-									</div>
-									<div class="col-xs-4 text-center">
-										<a href="#">Friends</a>
-									</div>
-								</div>
-								<!-- /.row -->
 							</li>
 							<!-- Menu Footer-->
 							<li class="user-footer">
@@ -158,7 +157,7 @@ desired effect
 
 			<!-- Sidebar Menu -->
 			<ul class="sidebar-menu" data-widget="tree">
-				<li class="header">HEADER</li>
+				<li class="header">MENU</li>
 				<!-- Optionally, you can add icons to the links -->
 				<li class="<?php echo $this->router->fetch_method() == 'index'?'active':'' ?>"><a href="<?php echo base_url($this->router->fetch_class()) ?>"><i class="fa fa-home"></i> <span>Home</span></a></li>
 				<li><a href="<?php echo base_url($this->router->fetch_class().'/data_training') ?>"><i class="fa fa-link"></i> <span>Data Training</span></a></li>
@@ -181,7 +180,7 @@ desired effect
 			Anything you want
 		</div>
 		<!-- Default to the left -->
-		<strong>Copyright &copy; <?php echo date('Y') ?> <a href="#">Medan Software</a>.</strong> All rights reserved.
+		<strong>Copyright &copy; <?php echo date('Y') ?> <a href="#">Skripsi</a>.</strong> All rights reserved.
 	</footer>
 
 	<!-- Control Sidebar -->
@@ -353,14 +352,11 @@ desired effect
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Default Modal</h4>
+				<h4 class="modal-title">Detail Data Training</h4>
 			</div>
-			<div class="modal-body">
-				<p>One fine body&hellip;</p>
-			</div>
+			<div class="modal-body" id="detail-data-training"></div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Tutup</button>
-				<button type="submit" class="btn btn-primary">Simpan</button>
+				<button type="button" class="btn btn-default pull-right" data-dismiss="modal">Tutup</button>
 			</div>
 		</div>
 	</div>
@@ -591,7 +587,33 @@ $(document).on('click', '.btn-data-training-option', function(event) {
 		break;
 
 		case 'view':
+			$.ajax({
+				url: '<?php echo base_url($this->router->fetch_class().'/all_data'); ?>/'+_data_id,
+				type: 'GET',
+				dataType: 'JSON',
+				success: function(data) {
+					var html = '<div class="col-lg-12">';
 
+					for (i = 0; i < data.images.length; i++) {
+						margin_top = 18;
+						if (i == 0)
+						{
+							margin_top = 0;
+						}
+						html += '<img src="<?php echo base_url('uploads/') ?>'+data.images[i].file+'" class="img-responsive" style="margin-top:'+margin_top+'%; margin-bottom:2%">';
+						for (icolor = 0; icolor < data.images[i].colors.length; icolor++) {
+							html += '<div class="col-lg-1 palette" style="background-color: rgb('+data.images[i].colors[icolor].red+', '+data.images[i].colors[icolor].green+', '+data.images[i].colors[icolor].blue+'); height: 200px; width: 200px; float:left;"></div>'
+						}
+					}
+
+					html += '</div>';
+					$('#detail-data-training').html(html);
+					$('#modal-view-data').modal('toggle');
+				},
+				error: function(error) {
+					console.log(error)
+				}
+			});
 		break;
 
 		case 'edit':

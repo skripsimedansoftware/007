@@ -377,6 +377,64 @@ class Admin extends CI_Controller {
 		$this->output->set_content_type('application/json')->set_output(json_encode($this->data_training_name->try()->result()));
 	}
 
+	public function all_data($id = NULL)
+	{
+		$data = array();
+		if (!empty($id))
+		{
+			$data_training_name = $this->data_training_name->read(array('id' => $id));
+			if ($data_training_name->num_rows() >= 1)
+			{
+				$data_training_name = $data_training_name->row();
+				$data = array('name' => $data_training_name->title, 'images' => array());
+
+				$data_training_image = $this->data_training_image->read(array('data-training-name' => $data_training_name->id));
+
+				if ($data_training_image->num_rows() >= 1)
+				{
+					foreach ($data_training_image->result() as $image_key => $image)
+					{
+						$data['images'][$image_key] = array('file' => $image->image, 'colors' => array());
+						$data_training_data = $this->data_training_data->read_in('data-training-image', $image->id);
+
+						if ($data_training_data->num_rows() >= 1)
+						{
+							$data['images'][$image_key]['colors'] = $data_training_data->result();
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			$data_training_name = $this->data_training_name->read();
+			if ($data_training_name->num_rows() >= 1)
+			{
+				foreach ($data_training_name->result() as $key => $name)
+				{
+					$data[$key] = array('name' => $name->title, 'images' => array());
+					$data_training_image = $this->data_training_image->read(array('data-training-name' => $name->id));
+
+					if ($data_training_image->num_rows() >= 1)
+					{
+						foreach ($data_training_image->result() as $image_key => $image)
+						{
+							$data[$key]['images'][$image_key] = array('file' => $image->image, 'colors' => array());
+							$data_training_data = $this->data_training_data->read_in('data-training-image', $image->id);
+
+							if ($data_training_data->num_rows() >= 1)
+							{
+								$data[$key]['images'][$image_key]['colors'] = $data_training_data->result();
+							}
+						}
+					}
+				}
+			}
+		}
+
+		$this->output->set_content_type('application/json')->set_output(json_encode($data));
+	}
+
 	public function email_confirm()
 	{
 		echo 'Confirm Code';
