@@ -1,0 +1,50 @@
+require('dotenv').config();
+const port = process.env.PORT || 3000;
+const { Server } = require('socket.io');
+const puppeteer = require('puppeteer');
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+const app = express();
+const http = require('http').Server(app);
+const io = new Server(http, {
+	transports: ['websocket', 'polling']
+});
+const os = require('os');
+
+app.use(cors({ origin : (origin, callback) => { callback(null, true) }, credentials: true }));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+app.use(express.static('public'));
+
+app.get('/', function(req, res) {
+	res.render('index', { title: 'Judul' });
+});
+
+io.on('connection', function(socket) {
+	socket.on('join_client', function() {
+		socket.join('client');
+	});
+
+	socket.on('join_check', function() {
+		socket.join('checker');
+	});
+
+	socket.on('image', function(data) {
+		socket.to('checker').emit('check', data);
+	});
+
+	socket.on('checked', function(data) {
+		socket.to('client').emit('checked', data);
+	});
+});
+
+if (process.env.Hosted == true) {
+	(async () => {
+		const browser = await puppeteer.launch();
+		const page = await browser.newPage();
+		await page.goto('http://localhost:'+port);
+	})();
+}
+
+http.listen(port);

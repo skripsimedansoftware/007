@@ -10,7 +10,7 @@ class Admin extends CI_Controller {
 		$this->load->model('user');
 		if (empty($this->session->userdata($this->router->fetch_class())))
 		{
-			if (!in_array($this->router->fetch_method(), ['login', 'register', 'forgot_password', 'reset_password', 'try']))
+			if (!in_array($this->router->fetch_method(), ['login', 'register', 'forgot_password', 'reset_password', 'try', 'all_data']))
 			{
 				redirect(base_url($this->router->fetch_class().'/login'), 'refresh');
 			}
@@ -386,7 +386,7 @@ class Admin extends CI_Controller {
 			if ($data_training_name->num_rows() >= 1)
 			{
 				$data_training_name = $data_training_name->row();
-				$data = array('name' => $data_training_name->title, 'images' => array());
+				$data = array('id' => $data_training_name->id, 'name' => $data_training_name->title, 'images' => array(), 'description' => $data_training_name->description);
 
 				$data_training_image = $this->data_training_image->read(array('data-training-name' => $data_training_name->id));
 
@@ -412,7 +412,7 @@ class Admin extends CI_Controller {
 			{
 				foreach ($data_training_name->result() as $key => $name)
 				{
-					$data[$key] = array('name' => $name->title, 'images' => array());
+					$data[$key] = array('id' => $name->id, 'name' => $name->title, 'images' => array(), 'description' => $name->description);
 					$data_training_image = $this->data_training_image->read(array('data-training-name' => $name->id));
 
 					if ($data_training_image->num_rows() >= 1)

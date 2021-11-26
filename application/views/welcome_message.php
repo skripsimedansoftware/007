@@ -185,11 +185,45 @@
 		</footer>
 	</div>
 </body>
+<?php 
+$host = 'http://localhost:3000';
+?>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $host ?>/socket.io/socket.io.min.js"></script>
 <!-- ML5.js -->
-<script src="<?php echo base_url('assets/plugins/') ?>ML5.js/ml5.min.js"></script>
+<!-- <script src="<?php echo base_url('assets/plugins/') ?>ML5.js/ml5.min.js"></script> -->
 <script type="text/javascript">
+window.socket = io('<?php echo $host ?>',{ transports: ['websocket', 'polling'] });
+window.all_data = [];
+(function() {
+	$.ajax({
+		url: '<?php echo base_url('admin/all_data') ?>',
+		type: 'GET',
+		dataType: 'JSON',
+		success: function(data) {
+			$.each(data, function(index, val) {
+				all_data.push(val);
+			});
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	});
+})();
+
+socket.on('connect', function() {
+	socket.emit('join_client');
+});
+
+var button_element = {
+	button_open_camera: {
+		rear: '<a class="btn open-camera btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
+		front: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
+		default: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Komputer/Laptop</a>'
+	},
+	button_stop_camera: '<a class="btn close-camera btn-sm btn-success" href="#" role="button">Tutup Kamera</a>'
+}
 if (!Object.prototype.watch) {
 	Object.defineProperty(Object.prototype,"watch", {
 		enumerable: false,
@@ -220,42 +254,44 @@ if (!Object.prototype.watch) {
 	});
 }
 
+draw_html();
+
 var find_value = (arrayName, searchKey, searchValue) => {
 	let find = arrayName.findIndex(i => i[searchKey] == searchValue);
 	return (find !== -1)?find:false;
 }
 
-window.knnready = false;
+// window.knnready = false;
 
-window.knnClassifier = ml5.KNNClassifier();
-window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
+// window.knnClassifier = ml5.KNNClassifier();
+// window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
 
-function readyToUse() {
-	draw_html();
-	window.knnready = true;
-	$.ajax({
-		url: '<?php echo base_url('admin/try') ?>',
-		type: 'GET',
-		dataType: 'JSON',
-		success: function(data) {
-			$.each(data, function(index, val) {
-				var temp_image = new Image();
-				temp_image.src = '<?php echo base_url('uploads/'); ?>'+val.image;
+// function readyToUse() {
+// 	draw_html();
+// 	window.knnready = true;
+// 	$.ajax({
+// 		url: '<?php echo base_url('admin/try') ?>',
+// 		type: 'GET',
+// 		dataType: 'JSON',
+// 		success: function(data) {
+// 			$.each(data, function(index, val) {
+// 				var temp_image = new Image();
+// 				temp_image.src = '<?php echo base_url('uploads/'); ?>'+val.image;
 
-				temp_image.onload = function() {
-					var img = new Image(this.width, this.height);
-					img.onload = function() {
-						console.log(window.knnClassifier.addExample(featureExtractor.infer(img), val.title));
-					}
-					img.src = '<?php echo base_url('uploads/'); ?>'+val.image;
-				}
-			});
-		},
-		error: function(error) {
+// 				temp_image.onload = function() {
+// 					var img = new Image(this.width, this.height);
+// 					img.onload = function() {
+// 						console.log(window.knnClassifier.addExample(featureExtractor.infer(img), val.title));
+// 					}
+// 					img.src = '<?php echo base_url('uploads/'); ?>'+val.image;
+// 				}
+// 			});
+// 		},
+// 		error: function(error) {
 
-		}
-	});
-}
+// 		}
+// 	});
+// }
 
 function drawCanvas(canvas, img) {
 	canvas.width = getComputedStyle(canvas).width.split('px')[0];
@@ -283,15 +319,6 @@ if (!('getUserMedia' in navigator.mediaDevices)) {
 			getUserMedia.call(navigator, constraints, resolve, reject);
 		});
 	}
-}
-
-var button_element = {
-	button_open_camera: {
-		rear: '<a class="btn open-camera btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
-		front: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
-		default: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Komputer/Laptop</a>'
-	},
-	button_stop_camera: '<a class="btn close-camera btn-sm btn-success" href="#" role="button">Tutup Kamera</a>'
 }
 
 function draw_html() {
@@ -355,16 +382,25 @@ $(document).on('click', '.open-camera', function(event) {
 					image.src = canvas.toDataURL();
 
 					image.addEventListener('load', function() {
+						socket.emit('image', {image : canvas.toDataURL()});
 						var colorThief = new ColorThief();
 						var colorArray = colorThief.getPalette(image, 16);
 
-						if (knnready) {
-							const features = featureExtractor.infer(image);
-							// Use KNN Classifier to classify these features
-							knnClassifier.classify(features, (err, result) => {
-								$('#result-label').text(result.label);
-							});
-						}
+						// if (knnready) {
+						// 	const features = featureExtractor.infer(image);
+						// 	// Use KNN Classifier to classify these features
+						// 	knnClassifier.classify(features, (err, result) => {
+						// 		$('#result-label').text(result.label);
+						// 	});
+						// }
+
+						socket.on('checked', function(data) {
+							console.log(data);
+							// var find = find_value(all_data, 'id', parseInt(data.label));
+							// if (find !== false) {
+							// 	$('#result-label').text(all_data[find].name+' '+all_data[find].description);
+							// }
+						})
 
 						$('#palettes').empty();
 						colorArray.forEach((el, index) => {
@@ -373,7 +409,7 @@ $(document).on('click', '.open-camera', function(event) {
 					});
 				})
 				.catch(console.log);
-			}, 1000);
+			}, 2000);
 
 			$(document).on('click', '.close-camera', function(event) {
 				event.preventDefault();

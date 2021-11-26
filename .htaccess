@@ -20,5 +20,6 @@
 		SetEnv TIME_REFRENCE Asia/Jakarta
 		SetEnv CI_ENV development
 		SetEnv ACTIVE_DATABASE_GROUP default
+		Header set Access-Control-Allow-Origin "*"
 	</IfModule>
 #--------------------------------------------------------------#

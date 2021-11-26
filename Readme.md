@@ -1,5 +1,6 @@
 # Medan Software - Codeigniter Web Camera :coffee:
 
+Klasifikasi Nilai Pasti dan Bukan Prediksi
 
 https://rahmadya.com/2018/10/22/deteksi-warna-dengan-jarak-euclidean/
 
