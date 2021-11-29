@@ -217,6 +217,14 @@ socket.on('connect', function() {
 	socket.emit('join_client');
 });
 
+socket.on('loaded', () => {
+	console.log('loaded');
+});
+
+socket.on('debug', data => {
+	console.log(data);
+});
+
 var button_element = {
 	button_open_camera: {
 		rear: '<a class="btn open-camera btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
@@ -395,13 +403,15 @@ $(document).on('click', '.open-camera', function(event) {
 						// 	});
 						// }
 
-						socket.on('checked', function(data) {
-							console.log(data);
-							// var find = find_value(all_data, 'id', parseInt(data.label));
-							// if (find !== false) {
-							// 	$('#result-label').text(all_data[find].name+' '+all_data[find].description);
-							// }
-						})
+						// socket.on('checked', function(data) {
+						// 	if (data !== null) {
+						// 		console.log(data);
+						// 	}
+						// 	// var find = find_value(all_data, 'id', parseInt(data.label));
+						// 	// if (find !== false) {
+						// 	// 	$('#result-label').text(all_data[find].name+' '+all_data[find].description);
+						// 	// }
+						// })
 
 						$('#palettes').empty();
 						colorArray.forEach((el, index) => {

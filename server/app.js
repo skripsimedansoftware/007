@@ -34,17 +34,23 @@ io.on('connection', function(socket) {
 		socket.to('checker').emit('check', data);
 	});
 
+	socket.on('loaded', function() {
+		socket.to('client').emit('loaded');
+	});
+
 	socket.on('checked', function(data) {
-		socket.to('client').emit('checked', data);
+		socket.to(data.socket_id).emit('debug', data);
+		socket.to(data.socket_id).emit('checked', data.result);
 	});
 });
 
-if (process.env.Hosted == true) {
-	(async () => {
-		const browser = await puppeteer.launch();
-		const page = await browser.newPage();
-		await page.goto('http://localhost:'+port);
-	})();
-}
+(async () => {
+	const browser = await puppeteer.launch({
+		args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		headless: true
+	});
+	const page = await browser.newPage();
+	var open_page = await page.goto('https://ml5-socket.herokuapp.com');
+})();
 
 http.listen(port);
