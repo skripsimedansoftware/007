@@ -186,7 +186,8 @@
 	</div>
 </body>
 <?php 
-$host = 'http://localhost:3000';
+// $host = 'http://localhost:3000';
+$host = 'https://ml5-socket.herokuapp.com';
 ?>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
@@ -382,7 +383,7 @@ $(document).on('click', '.open-camera', function(event) {
 					image.src = canvas.toDataURL();
 
 					image.addEventListener('load', function() {
-						socket.emit('image', {image : canvas.toDataURL()});
+						socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
 						var colorThief = new ColorThief();
 						var colorArray = colorThief.getPalette(image, 16);
 
