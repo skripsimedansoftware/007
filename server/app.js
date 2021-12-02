@@ -50,7 +50,7 @@ io.on('connection', function(socket) {
 		headless: true
 	});
 	const page = await browser.newPage();
-	var open_page = await page.goto('https://ml5-socket.herokuapp.com');
+	var open_page = await page.goto('103.102.154.10:'+port);
 })();
 
 http.listen(port);
