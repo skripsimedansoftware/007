@@ -51,7 +51,7 @@ io.on('connection', function(socket) {
 		headless: true
 	});
 	const page = await browser.newPage();
-	var open_page = await page.goto('103.102.154.10:'+port);
+	var open_page = await page.goto('http://103.102.154.10:'+port);
 })();
 
 http.listen(port);
