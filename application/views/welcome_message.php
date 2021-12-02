@@ -225,6 +225,10 @@ socket.on('debug', data => {
 	console.log(data);
 });
 
+socket.on('checked', data => {
+	console.log(data);
+});
+
 var button_element = {
 	button_open_camera: {
 		rear: '<a class="btn open-camera btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
