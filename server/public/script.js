@@ -5,8 +5,7 @@ socket.on('connect', function() {
 
 	window.knnClassifier = ml5.KNNClassifier();
 	window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
-	// window.serverURL = 'http://localhost/Skripsi-Project/extract-color-and-knearest-neighbors';
-	window.serverURL = 'http://103.102.154.10:20211';
+	window.serverURL = 'http://cek-kematangan-alpukat.uinsu.my.id';
 
 	function readyToUse() {
 		$.ajax({

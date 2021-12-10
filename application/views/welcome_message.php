@@ -187,7 +187,7 @@
 </body>
 <?php 
 // $host = 'http://localhost:3000';
-$host = 'http://103.102.154.10:20211';
+$host = 'https://ml5-server.uinsu.my.id';
 ?>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
