@@ -23,10 +23,12 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
 	socket.on('join_client', function() {
+		console.log('joined client')
 		socket.join('client');
 	});
 
 	socket.on('join_check', function() {
+		console.log('joined checker')
 		socket.join('checker');
 	});
 
@@ -35,10 +37,12 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('loaded', function() {
+		console.log('loaded machine')
 		socket.to('client').emit('loaded');
 	});
 
 	socket.on('checked', function(data) {
+		console.log('checked', data);
 		socket.to(data.socket_id).emit('debug', data);
 		socket.to(data.socket_id).emit('checked', data.result);
 	});
@@ -52,6 +56,7 @@ io.on('connection', function(socket) {
 	});
 	const page = await browser.newPage();
 	var open_page = await page.goto('http://103.102.154.10:'+port);
+	console.log(open_page)
 })();
 
 http.listen(port);

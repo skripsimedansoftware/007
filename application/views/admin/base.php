@@ -160,7 +160,7 @@ desired effect
 				<li class="header">MENU</li>
 				<!-- Optionally, you can add icons to the links -->
 				<li class="<?php echo $this->router->fetch_method() == 'index'?'active':'' ?>"><a href="<?php echo base_url($this->router->fetch_class()) ?>"><i class="fa fa-home"></i> <span>Home</span></a></li>
-				<li><a href="<?php echo base_url($this->router->fetch_class().'/data_training') ?>"><i class="fa fa-link"></i> <span>Data Training</span></a></li>
+				<li class="<?php echo $this->router->fetch_method() == 'data_training'?'active':'' ?>"><a href="<?php echo base_url($this->router->fetch_class().'/data_training') ?>"><i class="fa fa-link"></i> <span>Data Training</span></a></li>
 			</ul>
 			<!-- /.sidebar-menu -->
 		</section>
