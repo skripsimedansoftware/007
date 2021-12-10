@@ -5,7 +5,7 @@ socket.on('connect', function() {
 
 	window.knnClassifier = ml5.KNNClassifier();
 	window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
-	window.serverURL = 'http://cek-kematangan-alpukat.uinsu.my.id';
+	window.serverURL = 'https://cek-kematangan-alpukat.uinsu.my.id';
 
 	function readyToUse() {
 		$.ajax({

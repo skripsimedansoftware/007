@@ -195,7 +195,7 @@ $host = 'https://ml5-server.uinsu.my.id';
 <!-- ML5.js -->
 <!-- <script src="<?php echo base_url('assets/plugins/') ?>ML5.js/ml5.min.js"></script> -->
 <script type="text/javascript">
-window.socket = io('<?php echo $host ?>',{ transports: ['websocket', 'polling'] });
+window.socket = io('<?php echo $host ?>',{ transports: ['polling'] });
 window.all_data = [];
 (function() {
 	$.ajax({
