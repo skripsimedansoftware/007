@@ -1,6 +1,7 @@
 var socket = io();
 socket.on('connect', function() {
 
+	// join as checker
 	socket.emit('join_check');
 
 	window.knnClassifier = ml5.KNNClassifier();
