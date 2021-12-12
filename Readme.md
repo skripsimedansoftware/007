@@ -2,17 +2,13 @@
 
 Klasifikasi Nilai Pasti dan Bukan Prediksi
 
-https://rahmadya.com/2018/10/22/deteksi-warna-dengan-jarak-euclidean/
+Refrences :
 
-https://medium.com/bee-solution-partners/cara-kerja-algoritma-k-nearest-neighbor-k-nn-389297de543e
-
-https://ms.annonces-tunisiennes.com/article/how_to_quantify_the_distance_between_two_colors
- - https://gist.github.com/mikelikespie/641528/7e1874d76a1bf8586c79d8a7972d8430e072733a
- http://colormine.org/convert/rgb-to-lab
-
-mail : wina-ilkom@uinsu.my.id
-pass : wina-ilkom
-hero : Wina-ilkom2021
+- https://rahmadya.com/2018/10/22/deteksi-warna-dengan-jarak-euclidean/
+- https://medium.com/bee-solution-partners/cara-kerja-algoritma-k-nearest-neighbor-k-nn-389297de543e
+- https://ms.annonces-tunisiennes.com/article/how_to_quantify_the_distance_between_two_colors
+- https://gist.github.com/mikelikespie/641528/7e1874d76a1bf8586c79d8a7972d8430e072733a
+- http://colormine.org/convert/rgb-to-lab
 
 
 Site Setting

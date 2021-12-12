@@ -6,7 +6,6 @@ socket.on('connect', function() {
 
 	window.knnClassifier = ml5.KNNClassifier();
 	window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
-	// window.serverURL = 'http://localhost/Skripsi-Project/extract-color-and-knearest-neighbors';
 	window.serverURL = 'https://cek-kematangan-alpukat.uinsu.my.id';
 
 	function readyToUse() {
@@ -25,7 +24,10 @@ socket.on('connect', function() {
 						var img = new Image(this.width, this.height);
 						img.onload = function() {
 							if ((index+1) == total_data) {
-								socket.emit('loaded', 'all');
+								socket.emit('loaded', {
+									data: (index+1),
+									total: total_data
+								});
 							}
 							img.crossOrigin = 'anonymous';
 							window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
