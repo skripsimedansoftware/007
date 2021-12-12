@@ -159,7 +159,6 @@
 </head>
 
 <body>
-
 	<div class="container">
 		<div class="header clearfix">
 			<nav>
@@ -173,6 +172,20 @@
 		<div class="row">
 			<div class="jumbotron"></div>
 			<div class="col-lg-12" style="margin-top: 4%;" id="palettes"></div>
+			<div class="row">
+			<div class="col-lg-12" id="table-info">
+				<table class="table table-responsive table-hover">
+					<thead>
+						<th>Label</th>
+						<th>Deskripsi</th>
+						<th>Jumlah Data Gambar</th>
+						<th>Jumlah Data Warna</th>
+						<th>Keakuratan</th>
+					</thead>
+					<tbody id="confidences-list"></tbody>
+				</table>
+			</div>
+			</div>
 			<div class="col-lg-6" style="z-index: 0;margin-top: 0%;">
 				<img id="image" class="img-responsive" style="visibility: hidden;">
 			</div>
@@ -225,8 +238,50 @@ socket.on('debug', data => {
 	console.log(data);
 });
 
-socket.on('checked', data => {
-	console.log(data);
+socket.on('checked', result => {
+	if (result.confidencesByLabel !== undefined) {
+		console.log(result)
+		const confidences = result.confidencesByLabel;
+		Object.keys(confidences).forEach((label, key) => {
+			var td_id = label.split(' ').join('-');
+			$('td[id="'+td_id+'"]').text(confidences[label]+'%');
+		});
+
+		Object.keys(confidences).forEach((label, key) => {
+			var td_id = label.split(' ').join('-');
+			var text = confidences[label]?confidences[label]*100:0;
+			$('td[id="'+td_id+'"]').text(text+'%');
+		});
+
+		if (result.label) {
+			$('#result-label').text(result.label);
+			var td_id = result.label.split(' ').join('-');
+			$('td[id="'+td_id+'"]').text(confidences[result.label] * 100)+'%';
+		}
+	}
+});
+
+$(document).ready(function() {
+	$.ajax({
+		url: 'https://cek-kematangan-alpukat.uinsu.my.id/admin/all_data',
+		type: 'GET',
+		dataType: 'JSON',
+		success: function(data) {
+			$.each(data, function(index, val) {
+				var td_id = val.name.split(' ').join('-');
+				$('#confidences-list').append('<tr>'+
+					'<td>'+val.name+'</td>'+
+					'<td>'+val.description+'</td>'+
+					'<td>'+val.images.length+'</td>'+
+					'<td>'+(val.images.length*16)+'</td>'+
+					'<td id="'+td_id+'">0</td>'+
+				'</tr>');
+			});
+		},
+		error: function(error) {
+
+		}
+	});
 });
 
 var button_element = {
@@ -424,7 +479,7 @@ $(document).on('click', '.open-camera', function(event) {
 					});
 				})
 				.catch(console.log);
-			}, 2000);
+			}, 1000);
 
 			$(document).on('click', '.close-camera', function(event) {
 				event.preventDefault();
