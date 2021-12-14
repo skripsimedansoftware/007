@@ -172,20 +172,20 @@
 		<div class="row">
 			<div class="jumbotron"></div>
 			<div class="col-lg-12" style="margin-top: 4%;" id="palettes"></div>
-			<div class="row">
-			<div class="col-lg-12" id="table-info">
-				<table class="table table-responsive table-hover">
-					<thead>
-						<th>Label</th>
-						<th>Deskripsi</th>
-						<th>Jumlah Data Gambar</th>
-						<th>Jumlah Data Warna</th>
-						<th>Keakuratan</th>
-					</thead>
-					<tbody id="confidences-list"></tbody>
-				</table>
-			</div>
-			</div>
+			<!-- <div class="row">
+				<div class="col-lg-12" id="table-info">
+					<table class="table table-responsive table-hover">
+						<thead>
+							<th>Label</th>
+							<th>Deskripsi</th>
+							<th>Jumlah Data Gambar</th>
+							<th>Jumlah Data Warna</th>
+							<th>Keakuratan</th>
+						</thead>
+						<tbody id="confidences-list"></tbody>
+					</table>
+				</div>
+			</div> -->
 			<div class="col-lg-6" style="z-index: 0;margin-top: 0%;">
 				<img id="image" class="img-responsive" style="visibility: hidden;">
 			</div>
@@ -199,7 +199,7 @@
 	</div>
 </body>
 <?php 
-// $host = 'http://localhost:3000';
+// $host = 'http://localhost:20211';
 $host = 'https://ml5-server.uinsu.my.id';
 ?>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
@@ -267,16 +267,21 @@ $(document).ready(function() {
 		type: 'GET',
 		dataType: 'JSON',
 		success: function(data) {
-			$.each(data, function(index, val) {
-				var td_id = val.name.split(' ').join('-');
-				$('#confidences-list').append('<tr>'+
-					'<td>'+val.name+'</td>'+
-					'<td>'+val.description+'</td>'+
-					'<td>'+val.images.length+'</td>'+
-					'<td>'+(val.images.length*16)+'</td>'+
-					'<td id="'+td_id+'">0</td>'+
-				'</tr>');
+			socket.on('checked_colors', result => {
+				$('#result-label').text(result.label);
+				var find_description = find_value(data, 'id', parseInt(result.id));
+				$('#result-description').text(data[find_description].description+' '+result.percent+'%');
 			});
+			// $.each(data, function(index, val) {
+			// 	var td_id = val.name.split(' ').join('-');
+			// 	$('#confidences-list').append('<tr>'+
+			// 		'<td>'+val.name+'</td>'+
+			// 		'<td>'+val.description+'</td>'+
+			// 		'<td>'+val.images.length+'</td>'+
+			// 		'<td>'+(val.images.length*16)+'</td>'+
+			// 		'<td id="'+td_id+'">0</td>'+
+			// 	'</tr>');
+			// });
 		},
 		error: function(error) {
 
@@ -424,7 +429,7 @@ $(document).on('click', '.open-camera', function(event) {
 		openCamera('environment');
 	}
 	var video = document.getElementById('video');
-	$('.jumbotron').prepend('<h3 style="margin-top:-4%" id="result-label">KONDISI ALPUKAT</h3>')
+	$('.jumbotron').prepend('<h3 style="margin-top:-4%" id="result-label">KONDISI ALPUKAT</h3><span style="margin-top:-80%;font-size:20px;" id="result-description">xxx</span>');
 
 	function openCamera(type) {
 		navigator.mediaDevices.getUserMedia({ video: { facingMode: type }, audio: false }).then(stream => {
@@ -450,9 +455,11 @@ $(document).on('click', '.open-camera', function(event) {
 					image.src = canvas.toDataURL();
 
 					image.addEventListener('load', function() {
-						socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
+						// socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
 						var colorThief = new ColorThief();
 						var colorArray = colorThief.getPalette(image, 16);
+
+						socket.emit('check_colors', colorArray);
 
 						// if (knnready) {
 						// 	const features = featureExtractor.infer(image);
