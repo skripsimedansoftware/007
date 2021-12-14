@@ -429,7 +429,7 @@ $(document).on('click', '.open-camera', function(event) {
 		openCamera('environment');
 	}
 	var video = document.getElementById('video');
-	$('.jumbotron').prepend('<h3 style="margin-top:-4%" id="result-label">KONDISI ALPUKAT</h3><span style="margin-top:-80%;font-size:20px;" id="result-description">xxx</span>');
+	$('.jumbotron').prepend('<h3 style="margin-top:-4%" id="result-label">KONDISI ALPUKAT</h3><span style="margin-top:-80%;font-size:20px;" id="result-description"></span>');
 
 	function openCamera(type) {
 		navigator.mediaDevices.getUserMedia({ video: { facingMode: type }, audio: false }).then(stream => {
