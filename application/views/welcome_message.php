@@ -268,9 +268,9 @@ $(document).ready(function() {
 		dataType: 'JSON',
 		success: function(data) {
 			socket.on('checked_colors', result => {
-				$('#result-label').text(result.label);
-				var find_description = find_value(data, 'id', parseInt(result.id));
-				$('#result-description').text(data[find_description].description+' '+result.percent+'%');
+				var find_result = find_value(data, 'id', parseInt(result.id));
+				$('#result-label').text(data[find_result].name);
+				$('#result-description').text(data[find_result].description+' '+result.percent+'%');
 			});
 			// $.each(data, function(index, val) {
 			// 	var td_id = val.name.split(' ').join('-');
