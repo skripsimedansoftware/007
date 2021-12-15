@@ -33,7 +33,8 @@ global.KNNClassifier; // set KNN Classifier
 
 function getColors() {
 	return new Promise((resolve, reject) => {
-		axios.get('https://cek-kematangan-alpukat.uinsu.my.id/admin/all_data').then(response => {
+		axios.get('http://localhost/extract-color-and-knearest-neighbors/admin/all_data').then(response => {
+		// axios.get('https://cek-kematangan-alpukat.uinsu.my.id/admin/all_data').then(response => {
 			response.data.forEach((data, index) => {
 				for (image = 0; image < data.images.length; image++) {
 					data_count.push({
@@ -91,7 +92,8 @@ io.on('connection', function(socket) {
 		var data = {
 			id: KNN_Prediction[1],
 			label: KNN_Prediction[0],
-			percent: (data_found/total_data*100)
+			percent: (data_found/total_data*100),
+			knn: KNN_Prediction
 		};
 
 		socket.emit('checked_colors', data);

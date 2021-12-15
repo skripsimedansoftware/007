@@ -199,8 +199,8 @@
 	</div>
 </body>
 <?php 
-// $host = 'http://localhost:20211';
-$host = 'https://ml5-server.uinsu.my.id';
+$host = 'http://localhost:20211';
+// $host = 'https://ml5-server.uinsu.my.id';
 ?>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
@@ -263,11 +263,12 @@ socket.on('checked', result => {
 
 $(document).ready(function() {
 	$.ajax({
-		url: 'https://cek-kematangan-alpukat.uinsu.my.id/admin/all_data',
+		url: '<?php echo base_url(); ?>admin/all_data',
 		type: 'GET',
 		dataType: 'JSON',
 		success: function(data) {
 			socket.on('checked_colors', result => {
+				console.log(result)
 				var find_result = find_value(data, 'id', parseInt(result.id));
 				$('#result-label').text(data[find_result].name);
 				$('#result-description').text(data[find_result].description+' '+result.percent+'%');
@@ -294,6 +295,14 @@ var button_element = {
 		rear: '<a class="btn open-camera btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
 		front: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
 		default: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Komputer/Laptop</a>'
+	},
+	open_capture: {
+		rear: '<a class="btn open-capture btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
+		front: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Belakang</a>',
+		default: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Ambil Gambar</a>'
+	},
+	addons_button: {
+		take_picture: '<br><a class="btn take-picture btn-lg btn-success" count-dount="0" camera-type="rear" href="#" role="button">Ambil Gambar</a> <a class="btn take-picture btn-lg btn-success" count-dount="1" camera-type="rear" href="#" role="button">Hitung Mundur</a><br>'
 	},
 	button_stop_camera: '<a class="btn close-camera btn-sm btn-success" href="#" role="button">Tutup Kamera</a>'
 }
@@ -410,8 +419,11 @@ function draw_html() {
 	if (isMobile) {
 		html_element += '<p>'+button_element.button_open_camera.rear+'</p>';
 		html_element += '<p>'+button_element.button_open_camera.front+'</p>';
+		html_element += '<p>'+button_element.open_capture.rear+'</p>';
+		html_element += '<p>'+button_element.open_capture.front+'</p>';
 	} else {
 		html_element += '<p>'+button_element.button_open_camera.default+'</p>';
+		html_element += '<p>'+button_element.open_capture.default+'</p>';
 	}
 
 	$('.jumbotron').html(html_element);
@@ -484,8 +496,7 @@ $(document).on('click', '.open-camera', function(event) {
 							$('#palettes').append('<div class="col-lg-1 palette" style="background-color: rgb('+el[0]+', '+el[1]+', '+el[2]+'); height: 200px; width: 200px; float:left;"></div>');
 						});
 					});
-				})
-				.catch(console.log);
+				}).catch(console.log)
 			}, 1000);
 
 			$(document).on('click', '.close-camera', function(event) {
@@ -501,6 +512,106 @@ $(document).on('click', '.open-camera', function(event) {
 			video.onloadedmetadata = function(e) {
 				video.play();
 			}
+		}, console.log)
+	}
+});
+
+$(document).on('click', '.open-capture', function(event) {
+	event.preventDefault();
+	$('.jumbotron').empty();
+	$('.jumbotron').append('<div id="element-with-background-image"><div align="center" class="embed-responsive embed-responsive-16by9"><video id="video" autoplay loop class="embed-responsive-item"></video></div><div id="color-overlay"></div></div>');
+
+	var camera_type = $(this).attr('camera-type');
+	if (camera_type == 'front') {
+		openCamera('user');
+	} else {
+		openCamera('environment');
+	}
+	var video = document.getElementById('video');
+	$('.jumbotron').prepend('<h3 style="margin-top:-4%" id="result-label">KONDISI ALPUKAT</h3><span style="margin-top:-80%;font-size:20px;" id="result-description"></span>');
+
+	function openCamera(type) {
+		navigator.mediaDevices.getUserMedia({ video: { facingMode: type }, audio: false }).then(stream => {
+			if ('srcObject' in video) {
+				video.srcObject = stream;
+			} else {
+				video.src = window.URL.createObjectURL(stream);
+			}
+
+			$('.jumbotron').append(button_element.addons_button.take_picture).css('z-index', 1000);
+			$('.jumbotron').append(button_element.button_stop_camera).css('z-index', 1000);
+
+
+
+			$(document).on('click', '.take-picture', async function(e) {
+				e.preventDefault();
+				if (video.paused) {
+					video.play();
+				}
+				function take() {
+					var mediaStreamTrack = stream.getVideoTracks()[0];
+					var imageCapture = new ImageCapture(mediaStreamTrack);
+					imageCapture.grabFrame().then(imageBitmap => {
+						const canvas = document.getElementById('canvas');
+						canvas.width = imageBitmap.width;
+						canvas.height = imageBitmap.height;
+						drawCanvas(canvas, imageBitmap);
+
+						const image = document.getElementById('image');
+						image.src = canvas.toDataURL();
+
+						image.addEventListener('load', function() {
+							// socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
+							var colorThief = new ColorThief();
+							var colorArray = colorThief.getPalette(image, 16);
+							socket.emit('check_colors', colorArray);
+							$('#palettes').empty();
+							colorArray.forEach((el, index) => {
+								$('#palettes').append('<div class="col-lg-1 palette" style="background-color: rgb('+el[0]+', '+el[1]+', '+el[2]+'); height: 200px; width: 200px; float:left;"></div>');
+							});
+						});
+					}).catch(console.log)
+				}
+
+				var sleep = function(ms) {
+					return new Promise(resolve => setTimeout(resolve, ms));
+				}
+
+				var count_dount = parseInt($(this).attr('count-dount'));
+				if (count_dount == 1) {
+					console.log( $('.jumbotron').children('h3').length)
+					if ($('.jumbotron').children('h3').length < 2) {
+						$('.jumbotron').append('<h3 id="sleep">5</h3>').css('z-index', 1000);
+					} else {
+						$('#sleep').text(5);
+					}
+
+					for (i = 0; i < 5; i++) {
+						$('#sleep').text(parseInt($('#sleep').text()-1));
+						await sleep(1000);
+					}
+
+					take();
+					video.pause();
+				} else {
+					take();
+					video.pause();
+				}
+			});
+
+			$(document).on('click', '.close-camera', function(event) {
+				event.preventDefault();
+				stream.getTracks().forEach(function(track) {
+					track.stop();
+					// clearInterval(capture_color);
+					draw_html();
+					$('#palettes').empty();
+				});
+			});
+
+			// video.onloadedmetadata = function(e) {
+			// 	video.play();
+			// }
 		}, console.log)
 	}
 });
