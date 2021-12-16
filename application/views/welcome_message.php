@@ -210,6 +210,23 @@ $host = 'https://ml5-server.uinsu.my.id';
 <script type="text/javascript">
 window.socket = io('<?php echo $host ?>',{ transports: ['websocket', 'polling'] });
 window.all_data = [];
+
+var find_value = (arrayName, searchKey, searchValue) => {
+	let find = arrayName.findIndex(i => i[searchKey] == searchValue);
+	return (find !== -1)?find:false;
+}
+
+var random = function(array) {
+	var random = Math.floor(Math.random() * array.length);
+	return array[random];
+}
+
+var random_integer = function(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 (function() {
 	$.ajax({
 		url: '<?php echo base_url('admin/all_data') ?>',
@@ -235,9 +252,16 @@ socket.on('loaded', () => {
 });
 
 socket.on('checked', result => {
-	var find_result = find_value(all_data, 'name', result.result.label);
-	$('#result-label').text(all_data[find_result].name);
-	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	var cr = random_integer(0, 1);
+	if (cr == 0) {
+		var find_result = find_value(all_data, 'name', result.knn[0]);
+		$('#result-label').text(all_data[find_result].name);
+		$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	} else {
+		var find_result = find_value(all_data, 'name', result.result.label);
+		$('#result-label').text(all_data[find_result].name);
+		$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	}
 });
 
 socket.on('debug', data => {
@@ -337,11 +361,6 @@ if (!Object.prototype.watch) {
 }
 
 draw_html();
-
-var find_value = (arrayName, searchKey, searchValue) => {
-	let find = arrayName.findIndex(i => i[searchKey] == searchValue);
-	return (find !== -1)?find:false;
-}
 
 // window.knnready = false;
 
