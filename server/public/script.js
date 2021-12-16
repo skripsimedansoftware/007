@@ -30,7 +30,6 @@ socket.on('connect', function() {
 								});
 							}
 							img.crossOrigin = 'Anonymous';
-							// img['user-credentials'] = true;
 							window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						}
 
@@ -54,7 +53,7 @@ socket.on('connect', function() {
 			img.onload = function() {
 				const features = window.featureExtractor.infer(img);
 				// Use KNN Classifier to classify these features
-				knnClassifier.classify(features, (error, result) => {
+				window.knnClassifier.classify(features, (error, result) => {
 					console.log(result)
 					if (result !== null || result !== undefined) {
 						socket.emit('checked', {socket_id: data.socket_id, result: result, colors: data.colors});
