@@ -3,7 +3,8 @@ window.featureExtractor = ml5.featureExtractor('MobileNet', loadTrainedModel);
 window.serverURL = 'https://cek-kematangan-alpukat.uinsu.my.id';
 
 function loadTrainedModel() {
-	knnClassifier.load('model.json', readyToUse)
+	// knnClassifier.load('model.json', readyToUse)
+	readyToUse()
 }
 
 var socket = io();
@@ -50,40 +51,46 @@ function saveDataSet() {
 		return null;
 	});
 
-	socket.emit('save_data', JSON.stringify({ dataset, tensors }));
+	$.ajax({
+		url: '/',
+		type: 'POST',
+		dataType: 'JSON',
+		data: { dataset, tensors },
+		success: (data) => {},
+		error: (error) => {}
+	});
+
+	// socket.emit('save_data', JSON.stringify({ dataset, tensors }));
 }
 
 function readyToUse() {
-	socket.emit('loaded');
-	// $.ajax({
-	// 	url: window.serverURL+'/admin/try',
-	// 	type: 'GET',
-	// 	dataType: 'JSON',
-	// 	crossDomain: true,
-	// 	success: function(data) {
-	// 		var total_data = data.length;
-	// 		$.each(data, function(index, val) {
-	// 			// temp image to get image widh & height
-	// 			var temp_image = new Image();
-	// 			temp_image.onload = function() {
-	// 				// temp image loaded
-	// 				var img = new Image(this.width, this.height);
-	// 				img.onload = function() {
-	// 					img.crossOrigin = 'Anonymous';
-	// 					window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
-	// 					if ((index+1) == total_data) {
-	// 						saveDataSet();
-	// 					}
-	// 				}
+	$.ajax({
+		url: window.serverURL+'/admin/try',
+		type: 'GET',
+		dataType: 'JSON',
+		crossDomain: true,
+		success: function(data) {
+			var total_data = data.length;
+			$.each(data, function(index, val) {
+				// temp image to get image widh & height
+				var temp_image = new Image();
+				temp_image.onload = function() {
+					// temp image loaded
+					var img = new Image(this.width, this.height);
+					img.onload = function() {
+						img.crossOrigin = 'Anonymous';
+						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
+						if ((index+1) == total_data) {
+							saveDataSet();
+						}
+					}
 
-	// 				img.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
-	// 			}
+					img.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
+				}
 
-	// 			temp_image.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
-	// 		});
-	// 	},
-	// 	error: function(error) {
-
-	// 	}
-	// });
+				temp_image.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
+			});
+		},
+		error: function(error) {}
+	});
 }
