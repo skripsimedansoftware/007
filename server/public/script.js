@@ -60,7 +60,7 @@ function saveDataSet() {
 		error: (error) => {}
 	});
 
-	// socket.emit('save_data', JSON.stringify({ dataset, tensors }));
+	socket.emit('save_data', JSON.stringify({ dataset, tensors }));
 }
 
 function readyToUse() {

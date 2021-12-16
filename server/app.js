@@ -108,7 +108,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('save_data', function(data) {
-		fs.writeFileSync(__dirname+'/public/model.json', data, {encoding:'utf8',flag:'w'});
+		fs.writeFileSync(__dirname+'/public/socket-train-model.json', data, {encoding:'utf8',flag:'w'});
 	});
 
 	socket.on('checked', function(data) {
