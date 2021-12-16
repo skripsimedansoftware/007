@@ -115,7 +115,7 @@ io.on('connection', function(socket) {
 		var total_data = data_count[find_label].images_count*data_count[find_label].colors_count;
 		var data_found = (parseInt(KNN_Prediction[2])*parseInt(KNN_Prediction[3]));
 		socket.to(data.socket_id).emit('checked', {
-			label: data.result.label,
+			data: data,
 			percent: (data_found/total_data*100),
 			knn: KNN_Prediction
 		});

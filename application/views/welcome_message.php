@@ -268,6 +268,7 @@ $(document).ready(function() {
 		dataType: 'JSON',
 		success: function(data) {
 			socket.on('checked', result => {
+				console.log(result)
 				var find_result = find_value(data, 'name', parseInt(result.label));
 				$('#result-label').text(data[find_result].name);
 				$('#result-description').text(data[find_result].description+' '+result.percent+'%');
