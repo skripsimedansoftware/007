@@ -45,6 +45,9 @@ function readyToUse() {
 					img.onload = function() {
 						img.crossOrigin = 'Anonymous';
 						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
+						if ((index+1) == total_data) {
+							socket.emit('loaded');
+						}
 					}
 
 					img.src = 'https://alpukat-files.uinsu.my.id/'+val.image;

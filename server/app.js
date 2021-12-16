@@ -20,9 +20,6 @@ app.set('views', path.join(__dirname, 'views')); // Setup view path express.js
 app.set('view engine', 'hbs'); // Set view engine untuk express.js
 app.use(express.static('public')); // Static directory express.js
 
-app.get('/', function(req, res) {
-	res.render('index', { title: 'Judul' });
-});
 
 const axios = require('axios');
 const data_training = new Array();
@@ -119,6 +116,12 @@ io.on('connection', function(socket) {
 			knn: KNN_Prediction
 		});
 	});
+});
+
+app.get('/', function(req, res) {
+	res.render('index', { title: 'Judul' });
+}).get('/loaded', function(req, res) {
+	res.json({ loaded: loaded_data });
 });
 
 const puppeteer = require('puppeteer');
