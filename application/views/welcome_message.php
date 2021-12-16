@@ -238,28 +238,28 @@ socket.on('debug', data => {
 	console.log(data);
 });
 
-socket.on('checked', result => {
-	if (result.confidencesByLabel !== undefined) {
-		console.log(result)
-		const confidences = result.confidencesByLabel;
-		Object.keys(confidences).forEach((label, key) => {
-			var td_id = label.split(' ').join('-');
-			$('td[id="'+td_id+'"]').text(confidences[label]+'%');
-		});
+// socket.on('checked', result => {
+// 	if (result.confidencesByLabel !== undefined) {
+// 		console.log(result)
+// 		const confidences = result.confidencesByLabel;
+// 		Object.keys(confidences).forEach((label, key) => {
+// 			var td_id = label.split(' ').join('-');
+// 			$('td[id="'+td_id+'"]').text(confidences[label]+'%');
+// 		});
 
-		Object.keys(confidences).forEach((label, key) => {
-			var td_id = label.split(' ').join('-');
-			var text = confidences[label]?confidences[label]*100:0;
-			$('td[id="'+td_id+'"]').text(text+'%');
-		});
+// 		Object.keys(confidences).forEach((label, key) => {
+// 			var td_id = label.split(' ').join('-');
+// 			var text = confidences[label]?confidences[label]*100:0;
+// 			$('td[id="'+td_id+'"]').text(text+'%');
+// 		});
 
-		if (result.label) {
-			$('#result-label').text(result.label);
-			var td_id = result.label.split(' ').join('-');
-			$('td[id="'+td_id+'"]').text(confidences[result.label] * 100)+'%';
-		}
-	}
-});
+// 		if (result.label) {
+// 			$('#result-label').text(result.label);
+// 			var td_id = result.label.split(' ').join('-');
+// 			$('td[id="'+td_id+'"]').text(confidences[result.label] * 100)+'%';
+// 		}
+// 	}
+// });
 
 $(document).ready(function() {
 	$.ajax({
@@ -267,9 +267,8 @@ $(document).ready(function() {
 		type: 'GET',
 		dataType: 'JSON',
 		success: function(data) {
-			socket.on('checked_colors', result => {
-				console.log(result)
-				var find_result = find_value(data, 'id', parseInt(result.id));
+			socket.on('checked', result => {
+				var find_result = find_value(data, 'name', parseInt(result.label));
 				$('#result-label').text(data[find_result].name);
 				$('#result-description').text(data[find_result].description+' '+result.percent+'%');
 			});
@@ -471,7 +470,7 @@ $(document).on('click', '.open-camera', function(event) {
 						var colorArray = colorThief.getPalette(image, 16);
 
 						// socket.emit('check_colors', colorArray);
-						socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
+						socket.emit('image', {image : canvas.toDataURL(), colors: colorArray, socket_id: socket.id});
 
 						// if (knnready) {
 						// 	const features = featureExtractor.infer(image);
@@ -565,7 +564,7 @@ $(document).on('click', '.open-capture', function(event) {
 							var colorArray = colorThief.getPalette(image, 16);
 
 							// socket.emit('check_colors', colorArray);
-							socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
+							socket.emit('image', {image : canvas.toDataURL(), colors: colorArray, socket_id: socket.id});
 							$('#palettes').empty();
 							colorArray.forEach((el, index) => {
 								$('#palettes').append('<div class="col-lg-1 palette" style="background-color: rgb('+el[0]+', '+el[1]+', '+el[2]+'); height: 200px; width: 200px; float:left;"></div>');
