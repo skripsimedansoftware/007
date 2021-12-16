@@ -46,7 +46,6 @@ socket.on('connect', function() {
 	}
 
 	socket.on('check', function(data) {
-		console.log(data)
 		var temp_image = new Image();
 		temp_image.onload = function() {
 			// temp image loaded

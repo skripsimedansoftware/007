@@ -298,7 +298,7 @@ var button_element = {
 	},
 	open_capture: {
 		rear: '<a class="btn open-capture btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
-		front: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Belakang</a>',
+		front: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
 		default: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Ambil Gambar</a>'
 	},
 	addons_button: {
@@ -417,8 +417,8 @@ function draw_html() {
 	html_element += '<p class="lead">Dengan mengizinkan browser mengakses kamera anda maka sistem pengecekkan buah alpukat siap untuk anda gunakan</p>';
 
 	if (isMobile) {
-		html_element += '<p>'+button_element.button_open_camera.rear+'</p>';
-		html_element += '<p>'+button_element.button_open_camera.front+'</p>';
+		// html_element += '<p>'+button_element.button_open_camera.rear+'</p>';
+		// html_element += '<p>'+button_element.button_open_camera.front+'</p>';
 		html_element += '<p>'+button_element.open_capture.rear+'</p>';
 		html_element += '<p>'+button_element.open_capture.front+'</p>';
 	} else {
@@ -467,11 +467,11 @@ $(document).on('click', '.open-camera', function(event) {
 					image.src = canvas.toDataURL();
 
 					image.addEventListener('load', function() {
-						// socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
 						var colorThief = new ColorThief();
 						var colorArray = colorThief.getPalette(image, 16);
 
-						socket.emit('check_colors', colorArray);
+						// socket.emit('check_colors', colorArray);
+						socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
 
 						// if (knnready) {
 						// 	const features = featureExtractor.infer(image);
@@ -561,10 +561,11 @@ $(document).on('click', '.open-capture', function(event) {
 						image.src = canvas.toDataURL();
 
 						image.addEventListener('load', function() {
-							// socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
 							var colorThief = new ColorThief();
 							var colorArray = colorThief.getPalette(image, 16);
-							socket.emit('check_colors', colorArray);
+
+							// socket.emit('check_colors', colorArray);
+							socket.emit('image', {image : canvas.toDataURL(), socket_id: socket.id});
 							$('#palettes').empty();
 							colorArray.forEach((el, index) => {
 								$('#palettes').append('<div class="col-lg-1 palette" style="background-color: rgb('+el[0]+', '+el[1]+', '+el[2]+'); height: 200px; width: 200px; float:left;"></div>');
