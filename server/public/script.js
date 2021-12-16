@@ -61,7 +61,7 @@ function saveDataSet() {
 	// 	error: (error) => {}
 	// });
 
-	socket.emit('save_data', JSON.stringify({ dataset, tensors }));
+	// socket.emit('save_data', JSON.stringify({ dataset, tensors }));
 	socket.emit('loaded');
 }
 
@@ -83,7 +83,7 @@ function readyToUse() {
 						img.crossOrigin = 'Anonymous';
 						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						if ((index+1) == total_data) {
-							saveDataSet();
+							knnClassifier.save('train-data-all.json');
 						}
 					}
 

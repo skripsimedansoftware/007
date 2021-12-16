@@ -108,8 +108,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('save_data', function(data) {
-		fs.writeFileSync(__dirname+'/public/model.json', data, {flag: 'w'});
-		// fs.writeFileSync(__dirname+'/public/socket-train-model.json', data, {encoding:'utf8',flag:'w'});
+		fs.writeFileSync(__dirname+'/public/socket-train-model.json', data, {encoding:'utf8',flag:'w'});
 	});
 
 	socket.on('checked', function(data) {
@@ -144,6 +143,10 @@ const puppeteer = require('puppeteer');
 	});
 	const page = await browser.newPage();
 	var open_page = await page.goto('https://ml5-server.uinsu.my.id');
+	await page._client.send('Page.setDownloadBehavior', {
+		behavior: 'allow',
+		downloadPath: __dirname+'/public/'
+	});
 })();
 
 http.listen(port);
