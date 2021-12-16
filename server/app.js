@@ -108,6 +108,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('save_data', function(data) {
+		console.log(data.length)
 		fs.writeFileSync(__dirname+'/public/socket-train-model.json', data, {encoding:'utf8',flag:'w'});
 	});
 
@@ -127,8 +128,7 @@ io.on('connection', function(socket) {
 app.get('/', function(req, res) {
 	res.render('index', { title: 'Judul' });
 }).post('/', function(req, res) {
-	console.log(req.body)
-	fs.writeFileSync(__dirname+'/public/train-model.json', req.body, {encoding:'utf8',flag:'w'});
+	fs.writeFileSync(__dirname+'/public/train-model.json', req.body.content, {encoding:'utf8',flag:'w'});
 	res.json({ status: 'success' });
 }).get('/loaded', function(req, res) {
 	res.json({ loaded: loaded_data });

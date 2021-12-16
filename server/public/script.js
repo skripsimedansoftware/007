@@ -51,14 +51,16 @@ function saveDataSet() {
 		return null;
 	});
 
-	$.ajax({
-		url: '/',
-		type: 'POST',
-		dataType: 'JSON',
-		data: { dataset, tensors },
-		success: (data) => {},
-		error: (error) => {}
-	});
+	// $.ajax({
+	// 	url: '/',
+	// 	type: 'POST',
+	// 	dataType: 'JSON',
+	// 	data: {
+	// 		content: JSON.stringify({ dataset, tensors })
+	// 	},
+	// 	success: (data) => {},
+	// 	error: (error) => {}
+	// });
 
 	socket.emit('save_data', JSON.stringify({ dataset, tensors }));
 }
