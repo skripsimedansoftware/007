@@ -7,7 +7,7 @@ function loadTrainedModel() {
 	readyToUse()
 }
 
-var socket = io();
+var socket = io({ transports: ['websocket', 'polling'] });
 socket.on('connect', function() {
 	// join as checker
 	socket.emit('join_check');
