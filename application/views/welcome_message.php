@@ -211,22 +211,6 @@ $host = 'https://ml5-server.uinsu.my.id';
 window.socket = io('<?php echo $host ?>',{ transports: ['websocket', 'polling'] });
 window.all_data = [];
 
-var find_value = (arrayName, searchKey, searchValue) => {
-	let find = arrayName.findIndex(i => i[searchKey] == searchValue);
-	return (find !== -1)?find:false;
-}
-
-var random = function(array) {
-	var random = Math.floor(Math.random() * array.length);
-	return array[random];
-}
-
-var random_integer = function(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 (function() {
 	$.ajax({
 		url: '<?php echo base_url('admin/all_data') ?>',
@@ -242,6 +226,22 @@ var random_integer = function(min, max) {
 		}
 	});
 })();
+
+var find_value = (arrayName, searchKey, searchValue) => {
+	let find = arrayName.findIndex(i => i[searchKey] == searchValue);
+	return (find !== -1)?find:false;
+}
+
+var random = function(array) {
+	var random = Math.floor(Math.random() * array.length);
+	return array[random];
+}
+
+var random_integer = function(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 socket.on('connect', function() {
 	socket.emit('join_client');
