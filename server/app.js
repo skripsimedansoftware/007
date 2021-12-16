@@ -109,6 +109,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('checked', function(data) {
+		console.log(data)
 		var KNN_Prediction = KNNClassifier.predict(data.colors)[0].split('-');
 		var find_label = find_value(data_count, 'id', KNN_Prediction[1]);
 		var total_data = data_count[find_label].images_count*data_count[find_label].colors_count;
