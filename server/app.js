@@ -27,6 +27,7 @@ const data_count = new Array();
 const KNN = require('ml-knn');
 
 global.KNNClassifier; // set KNN Classifier
+global.loaded_data = false;
 
 function getColors() {
 	return new Promise((resolve, reject) => {
@@ -101,7 +102,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('loaded', function() {
-		global.loaded_data = true;
+		loaded_data = true;
 		socket.to('client').emit('loaded');
 	});
 
