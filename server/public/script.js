@@ -33,7 +33,6 @@ socket.on('connect', function() {
 });
 
 function saveDataSet() {
-	socket.emit('loaded');
 	const dataset = knnClassifier.getClassifierDataset();
 	if (knnClassifier.mapStringToIndex.length > 0) {
 		Object.keys(dataset).forEach((key) => {
@@ -63,6 +62,7 @@ function saveDataSet() {
 	// });
 
 	socket.emit('save_data', JSON.stringify({ dataset, tensors }));
+	socket.emit('loaded');
 }
 
 function readyToUse() {
