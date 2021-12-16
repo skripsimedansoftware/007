@@ -34,10 +34,10 @@ socket.on('connect', function() {
 							window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						}
 
-						img.src = window.serverURL+'/uploads/'+val.image;
+						img.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
 					}
 
-					temp_image.src = window.serverURL+'/uploads/'+val.image;
+					temp_image.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
 				});
 			},
 			error: function(error) {
