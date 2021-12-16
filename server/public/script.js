@@ -28,11 +28,12 @@ socket.on('connect', function() {
 });
 
 function saveDataSet() {
-	const dataset = this.knnClassifier.getClassifierDataset();
-	if (this.mapStringToIndex.length > 0) {
+	socket.emit('loaded');
+	const dataset = knnClassifier.getClassifierDataset();
+	if (knnClassifier.mapStringToIndex.length > 0) {
 		Object.keys(dataset).forEach((key) => {
-			if (this.mapStringToIndex[key]) {
-				dataset[key].label = this.mapStringToIndex[key];
+			if (knnClassifier.mapStringToIndex[key]) {
+				dataset[key].label = knnClassifier.mapStringToIndex[key];
 			}
 		});
 	}
@@ -66,7 +67,6 @@ function readyToUse() {
 						img.crossOrigin = 'Anonymous';
 						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						if ((index+1) == total_data) {
-							socket.emit('loaded');
 							saveDataSet();
 						}
 					}
