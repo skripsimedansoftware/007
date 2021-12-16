@@ -108,6 +108,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('save_data', function(data) {
+		console.log('savedata', data);
 		fs.writeFileSync(__dirname+'/public/model.json', data, {flag: 'w'});
 	});
 
