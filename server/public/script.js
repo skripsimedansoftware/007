@@ -54,7 +54,10 @@ socket.on('connect', function() {
 				const features = window.featureExtractor.infer(img);
 				// Use KNN Classifier to classify these features
 				knnClassifier.classify(features, (error, result) => {
-					socket.emit('checked', {socket_id: data.socket_id, result: result, colors: data.colors});
+					console.log(result)
+					if (result !== null || result !== undefined) {
+						socket.emit('checked', {socket_id: data.socket_id, result: result, colors: data.colors});
+					}
 				});
 			}
 
