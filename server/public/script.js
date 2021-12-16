@@ -29,8 +29,8 @@ socket.on('connect', function() {
 									total: total_data
 								});
 							}
-							img.crossOrigin = '';
-							img['user-credentials'] = true;
+							img.crossOrigin = 'Anonymous';
+							// img['user-credentials'] = true;
 							window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						}
 
