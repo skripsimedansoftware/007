@@ -33,11 +33,11 @@ socket.on('connect', function() {
 });
 
 function saveDataSet() {
-	const dataset = knnClassifier.getClassifierDataset();
-	if (knnClassifier.mapStringToIndex.length > 0) {
+	const dataset = window.knnClassifier.getClassifierDataset();
+	if (window.knnClassifier.mapStringToIndex.length > 0) {
 		Object.keys(dataset).forEach((key) => {
-			if (knnClassifier.mapStringToIndex[key]) {
-				dataset[key].label = knnClassifier.mapStringToIndex[key];
+			if (window.knnClassifier.mapStringToIndex[key]) {
+				dataset[key].label = window.knnClassifier.mapStringToIndex[key];
 			}
 		});
 	}
@@ -83,7 +83,7 @@ function readyToUse() {
 						img.crossOrigin = 'Anonymous';
 						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						if ((index+1) == total_data) {
-							knnClassifier.save('train-data-all.json');
+							window.knnClassifier.save('train-data-all.json');
 						}
 					}
 
