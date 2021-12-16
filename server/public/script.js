@@ -4,7 +4,6 @@ window.serverURL = 'https://cek-kematangan-alpukat.uinsu.my.id';
 
 var socket = io();
 socket.on('connect', function() {
-
 	// join as checker
 	socket.emit('join_check');
 
@@ -28,6 +27,27 @@ socket.on('connect', function() {
 	});
 });
 
+function saveDataSet() {
+	const dataset = this.knnClassifier.getClassifierDataset();
+	if (this.mapStringToIndex.length > 0) {
+		Object.keys(dataset).forEach((key) => {
+			if (this.mapStringToIndex[key]) {
+				dataset[key].label = this.mapStringToIndex[key];
+			}
+		});
+	}
+
+	const tensors = Object.keys(dataset).map((key) => {
+	const t = dataset[key];
+		if (t) {
+			return t.dataSync();
+		}
+		return null;
+	});
+
+	socket.emit('save_data', JSON.stringify({ dataset, tensors }));
+}
+
 function readyToUse() {
 	$.ajax({
 		url: window.serverURL+'/admin/try',
@@ -47,6 +67,7 @@ function readyToUse() {
 						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
 						if ((index+1) == total_data) {
 							socket.emit('loaded');
+							saveDataSet();
 						}
 					}
 

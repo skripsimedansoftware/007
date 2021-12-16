@@ -252,16 +252,20 @@ socket.on('loaded', () => {
 });
 
 socket.on('checked', result => {
-	var cr = random_integer(0, 1);
-	if (cr == 0) {
-		var find_result = find_value(all_data, 'name', result.knn[0]);
-		$('#result-label').text(all_data[find_result].name);
-		$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
-	} else {
-		var find_result = find_value(all_data, 'name', result.result.label);
-		$('#result-label').text(all_data[find_result].name);
-		$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
-	}
+	// var cr = random_integer(0, 1);
+	// if (cr == 0) {
+	// 	var find_result = find_value(all_data, 'name', result.knn[0]);
+	// 	$('#result-label').text(all_data[find_result].name);
+	// 	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	// } else {
+	// 	var find_result = find_value(all_data, 'name', result.result.label);
+	// 	$('#result-label').text(all_data[find_result].name);
+	// 	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	// }
+
+	var find_result = find_value(all_data, 'name', result.result.label);
+	$('#result-label').text(all_data[find_result].name);
+	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
 });
 
 socket.on('debug', data => {

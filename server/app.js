@@ -6,6 +6,7 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const http = require('http').Server(app);
+const fs = require('fs');
 const io = new Server(http, {
 	transports: ['websocket', 'polling']
 });
@@ -104,6 +105,10 @@ io.on('connection', function(socket) {
 	socket.on('loaded', function() {
 		loaded_data = true;
 		socket.to('client').emit('loaded');
+	});
+
+	socket.on('save_data', function(data) {
+		fs.writeFileSync(__dirname+'/public/model.json', data, {flag: 'w'});
 	});
 
 	socket.on('checked', function(data) {
