@@ -234,6 +234,12 @@ socket.on('loaded', () => {
 	console.log('loaded');
 });
 
+socket.on('checked', result => {
+	var find_result = find_value(all_data, 'name', result.result.label);
+	$('#result-label').text(data[find_result].name);
+	$('#result-description').text(data[find_result].description+' '+result.percent+'%');
+});
+
 socket.on('debug', data => {
 	console.log(data);
 });
@@ -261,34 +267,28 @@ socket.on('debug', data => {
 // 	}
 // });
 
-$(document).ready(function() {
-	$.ajax({
-		url: '<?php echo base_url(); ?>admin/all_data',
-		type: 'GET',
-		dataType: 'JSON',
-		success: function(data) {
-			socket.on('checked', result => {
-				console.log(result)
-				var find_result = find_value(data, 'name', parseInt(result.label));
-				$('#result-label').text(data[find_result].name);
-				$('#result-description').text(data[find_result].description+' '+result.percent+'%');
-			});
-			// $.each(data, function(index, val) {
-			// 	var td_id = val.name.split(' ').join('-');
-			// 	$('#confidences-list').append('<tr>'+
-			// 		'<td>'+val.name+'</td>'+
-			// 		'<td>'+val.description+'</td>'+
-			// 		'<td>'+val.images.length+'</td>'+
-			// 		'<td>'+(val.images.length*16)+'</td>'+
-			// 		'<td id="'+td_id+'">0</td>'+
-			// 	'</tr>');
-			// });
-		},
-		error: function(error) {
+// $(document).ready(function() {
+// 	$.ajax({
+// 		url: '<?php echo base_url(); ?>admin/all_data',
+// 		type: 'GET',
+// 		dataType: 'JSON',
+// 		success: function(data) {
+// 			$.each(data, function(index, val) {
+// 				var td_id = val.name.split(' ').join('-');
+// 				$('#confidences-list').append('<tr>'+
+// 					'<td>'+val.name+'</td>'+
+// 					'<td>'+val.description+'</td>'+
+// 					'<td>'+val.images.length+'</td>'+
+// 					'<td>'+(val.images.length*16)+'</td>'+
+// 					'<td id="'+td_id+'">0</td>'+
+// 				'</tr>');
+// 			});
+// 		},
+// 		error: function(error) {
 
-		}
-	});
-});
+// 		}
+// 	});
+// });
 
 var button_element = {
 	button_open_camera: {
@@ -580,7 +580,6 @@ $(document).on('click', '.open-capture', function(event) {
 
 				var count_dount = parseInt($(this).attr('count-dount'));
 				if (count_dount == 1) {
-					console.log( $('.jumbotron').children('h3').length)
 					if ($('.jumbotron').children('h3').length < 2) {
 						$('.jumbotron').append('<h3 id="sleep">5</h3>').css('z-index', 1000);
 					} else {
