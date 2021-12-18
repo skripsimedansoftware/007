@@ -1,5 +1,5 @@
 window.knnClassifier = ml5.KNNClassifier();
-window.featureExtractor = ml5.featureExtractor('MobileNet', loadTrainedModel);
+window.featureExtractor = ml5.featureExtractor('MobileNet', readyToUse);
 window.serverURL = 'https://cek-kematangan-alpukat.uinsu.my.id';
 
 // function loadTrainedModel() {
