@@ -29,8 +29,8 @@ socket.on('connect', function() {
 
 
 function readyToUse() {
-	// window.knnClassifier.load('data-set.json');
-	// window.knnClassifier.load('data-train.json');
+	window.knnClassifier.load('data-set.json');
+	window.knnClassifier.load('data-train.json');
 	$.ajax({
 		url: window.serverURL+'/admin/all_data',
 		type: 'GET',
