@@ -102,9 +102,9 @@ io.on('connection', function(socket) {
 		socket.to('checker').emit('check', data);
 	});
 
-	socket.on('loaded', function() {
+	socket.on('loaded', function(name) {
 		loaded_data = true;
-		socket.to('client').emit('loaded');
+		socket.to('client').emit('loaded', name);
 	});
 
 	socket.on('save_data', function(data) {

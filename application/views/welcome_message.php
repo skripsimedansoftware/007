@@ -248,7 +248,7 @@ socket.on('connect', function() {
 });
 
 socket.on('loaded', (data) => {
-	console.log('loaded');
+	console.log('loaded', data);
 });
 
 socket.on('checked', result => {
