@@ -46,7 +46,7 @@ function readyToUse() {
 					});
 					const img = await load_image;
 					const features = featureExtractor.infer(img);
-					socket.emit('loaded', { type: 'trained_model', name: el.name });
+					socket.emit('loaded', { type: 'load_train_image', name: el.name });
 					// Add an example with a label to the KNN Classifier
 					knnClassifier.addExample(features, el.name);
 				}
