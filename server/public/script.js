@@ -22,8 +22,13 @@ socket.on('connect', function() {
 
 
 function readyToUse() {
-	window.knnClassifier.load('data-set.json', { type: 'trained_model', name: 'data-set.json' });
-	window.knnClassifier.load('data-train.json', { type: 'trained_model', name: 'data-train.json' });
+	window.knnClassifier.load('data-set.json', () => {
+		socket.emit('loaded', { type: 'trained_model', name: 'data-set.json' })
+	});
+
+	window.knnClassifier.load('data-train.json', () => {
+		socket.emit('loaded', { type: 'trained_model', name: 'data-train.json' })
+	});
 	$.ajax({
 		url: window.serverURL+'/admin/all_data',
 		type: 'GET',
