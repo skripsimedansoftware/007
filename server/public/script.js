@@ -29,8 +29,8 @@ socket.on('connect', function() {
 
 
 function readyToUse() {
-	window.knnClassifier.load('data-set.json');
-	window.knnClassifier.load('data-train.json');
+	window.knnClassifier.load('data-set.json', { type: 'trained_model', name: 'data-set.json' });
+	window.knnClassifier.load('data-train.json', { type: 'trained_model', name: 'data-train.json' });
 	$.ajax({
 		url: window.serverURL+'/admin/all_data',
 		type: 'GET',
@@ -46,7 +46,7 @@ function readyToUse() {
 					});
 					const img = await load_image;
 					const features = featureExtractor.infer(img);
-					socket.emit('loaded', el.name);
+					socket.emit('loaded', { type: 'trained_model', name: el.name });
 					// Add an example with a label to the KNN Classifier
 					knnClassifier.addExample(features, el.name);
 				}
