@@ -187,10 +187,10 @@
 				</div>
 			</div> -->
 			<div class="col-lg-6" style="z-index: 0;margin-top: 0%;">
-				<img id="image" class="img-responsive" style="visibility: hidden;">
+				<img id="image" style="visibility: hidden;">
 			</div>
 			<div class="col-lg-6" style="z-index: 0;margin-top: 0%;">
-				<canvas id="canvas" class="img-responsive" style="visibility: hidden;"></canvas>
+				<canvas id="canvas" style="visibility: hidden;"></canvas>
 			</div>
 		</div>
 		<footer class="footer">
@@ -210,6 +210,9 @@ $host = 'https://ml5-server.uinsu.my.id';
 <script type="text/javascript">
 window.socket = io('<?php echo $host ?>',{ transports: ['websocket', 'polling'] });
 window.all_data = [];
+
+const canvas = document.getElementById('canvas');
+const image = document.getElementById('image');
 
 (function() {
 	$.ajax({
@@ -482,12 +485,13 @@ $(document).on('click', '.open-camera', function(event) {
 
 			var capture_color = setInterval(function() {
 				imageCapture.grabFrame().then(imageBitmap => {
-					const canvas = document.getElementById('canvas');
+					var context = canvas.getContext('2d');
+					context.fillStyle = "#AAA";
+					context.fillRect(0, 0, imageBitmap.width, imageBitmap.height);
+
 					canvas.width = imageBitmap.width;
 					canvas.height = imageBitmap.height;
 					drawCanvas(canvas, imageBitmap);
-
-					const image = document.getElementById('image');
 					image.src = canvas.toDataURL();
 
 					image.addEventListener('load', function() {
@@ -572,16 +576,22 @@ $(document).on('click', '.open-capture', function(event) {
 				if (video.paused) {
 					video.play();
 				}
+
 				function take() {
 					var mediaStreamTrack = stream.getVideoTracks()[0];
 					var imageCapture = new ImageCapture(mediaStreamTrack);
+
 					imageCapture.grabFrame().then(imageBitmap => {
-						const canvas = document.getElementById('canvas');
+						var context = canvas.getContext('2d');
+						context.fillStyle = "#AAA";
+						context.fillRect(0, 0, imageBitmap.width, imageBitmap.height);
+
+						console.log(canvas);
+
 						canvas.width = imageBitmap.width;
 						canvas.height = imageBitmap.height;
 						drawCanvas(canvas, imageBitmap);
 
-						const image = document.getElementById('image');
 						image.src = canvas.toDataURL();
 
 						image.addEventListener('load', function() {
