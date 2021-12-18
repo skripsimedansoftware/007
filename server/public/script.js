@@ -2,10 +2,10 @@ window.knnClassifier = ml5.KNNClassifier();
 window.featureExtractor = ml5.featureExtractor('MobileNet', loadTrainedModel);
 window.serverURL = 'https://cek-kematangan-alpukat.uinsu.my.id';
 
-function loadTrainedModel() {
-	// knnClassifier.load('model.json', readyToUse)
-	readyToUse()
-}
+// function loadTrainedModel() {
+// 	window.knnClassifier.load('data-set.json', readyToUse)
+// 	readyToUse()
+// }
 
 var socket = io({ transports: ['websocket', 'polling'] });
 socket.on('connect', function() {
@@ -32,67 +32,8 @@ socket.on('connect', function() {
 	});
 });
 
-function saveDataSet() {
-	const dataset = window.knnClassifier.getClassifierDataset();
-	if (window.knnClassifier.mapStringToIndex.length > 0) {
-		Object.keys(dataset).forEach((key) => {
-			if (window.knnClassifier.mapStringToIndex[key]) {
-				dataset[key].label = window.knnClassifier.mapStringToIndex[key];
-			}
-		});
-	}
-
-	const tensors = Object.keys(dataset).map((key) => {
-	const t = dataset[key];
-		if (t) {
-			return t.dataSync();
-		}
-		return null;
-	});
-
-	// $.ajax({
-	// 	url: '/',
-	// 	type: 'POST',
-	// 	dataType: 'JSON',
-	// 	data: {
-	// 		content: JSON.stringify({ dataset, tensors })
-	// 	},
-	// 	success: (data) => {},
-	// 	error: (error) => {}
-	// });
-
-	// socket.emit('save_data', JSON.stringify({ dataset, tensors }));
-	socket.emit('loaded');
-}
 
 function readyToUse() {
-	$.ajax({
-		url: window.serverURL+'/admin/try',
-		type: 'GET',
-		dataType: 'JSON',
-		crossDomain: true,
-		success: function(data) {
-			var total_data = data.length;
-			$.each(data, function(index, val) {
-				// temp image to get image widh & height
-				var temp_image = new Image();
-				temp_image.onload = function() {
-					// temp image loaded
-					var img = new Image(this.width, this.height);
-					img.onload = function() {
-						img.crossOrigin = 'Anonymous';
-						window.knnClassifier.addExample(window.featureExtractor.infer(img), val.title);
-						if ((index+1) == total_data) {
-							window.knnClassifier.save('train-data-all.json');
-						}
-					}
-
-					img.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
-				}
-
-				temp_image.src = 'https://alpukat-files.uinsu.my.id/'+val.image;
-			});
-		},
-		error: function(error) {}
-	});
+	socket.emit('loaded');
+	window.knnClassifier.load('data-set.json');
 }

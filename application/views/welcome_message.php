@@ -247,7 +247,7 @@ socket.on('connect', function() {
 	socket.emit('join_client');
 });
 
-socket.on('loaded', () => {
+socket.on('loaded', (data) => {
 	console.log('loaded');
 });
 
@@ -263,6 +263,7 @@ socket.on('checked', result => {
 	// 	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
 	// }
 
+	console.log(result);
 	var find_result = find_value(all_data, 'name', result.result.label);
 	$('#result-label').text(all_data[find_result].name);
 	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
