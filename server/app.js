@@ -30,6 +30,8 @@ const KNN = require('ml-knn');
 global.KNNClassifier; // set KNN Classifier
 global.loaded_data = false;
 
+var total_colors = 0
+
 function getColors() {
 	return new Promise((resolve, reject) => {
 		// axios.get('http://localhost/extract-color-and-knearest-neighbors/admin/all_data').then(response => {
@@ -116,6 +118,23 @@ io.on('connection', function(socket) {
 		var find_label = find_value(data_count, 'id', KNN_Prediction[1]);
 		var total_data = data_count[find_label].images_count*data_count[find_label].colors_count;
 		var data_found = (parseInt(KNN_Prediction[2])*parseInt(KNN_Prediction[3]));
+
+		console.log('checked', data);
+		data_count.forEach((count) => {
+			if (total_colors == 0) {
+				console.log('total colors before', total_colors)
+				total_colors = (total_colors+(parseInt(count.images_count)*parseInt(count.colors_count)));
+				console.log('total colors after', total_colors)
+			}
+		});
+
+		var X = (total_colors/data_count.length)/total_colors;
+
+		console.log('XDEBUG', total_colors+':'+data_count.length+':'+total_colors, ' = ', X)
+		X = (X*100)
+
+		console.log('XDEBUG OLD', data_found+':'+total_data+'x'+'100', ' = ', X)
+
 		socket.to(data.socket_id).emit('checked', {
 			result: data.result,
 			percent: (data_found/total_data*100),
@@ -138,11 +157,12 @@ const puppeteer = require('puppeteer');
 (async () => {
 	const browser = await puppeteer.launch({
 		args: ['--no-sandbox', '--disable-setuid-sandbox'],
-		executablePath: '/usr/bin/google-chrome',
+		// executablePath: '/usr/bin/google-chrome',
+		// executablePath: 'C:\/Users\/user\/AppData\/Local\/Google\/Chrome\/Application\/chrome.exe',
 		headless: true
 	});
 	const page = await browser.newPage();
-	var open_page = await page.goto('https://ml5-server.uinsu.my.id');
+	var open_page = await page.goto('https://cek-kematangan-alpukat.herokuapp.com');
 	await page._client.send('Page.setDownloadBehavior', {
 		behavior: 'allow',
 		downloadPath: __dirname+'/public/'

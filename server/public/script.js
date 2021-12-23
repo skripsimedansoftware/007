@@ -40,7 +40,7 @@ function readyToUse() {
 						const img_temp = new Image();
 						img_temp.onload = () => resolve(img_temp)
 						img_temp.crossOrigin = 'anonymous';
-						img_temp.src = 'https://alpukat-files.uinsu.my.id/'+el.images[i].file
+						img_temp.src = 'https://images.cek-kematangan-alpukat.uinsu.my.id/'+el.images[i].file
 					});
 					const img = await load_image;
 					const features = featureExtractor.infer(img);
