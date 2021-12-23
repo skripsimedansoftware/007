@@ -200,7 +200,7 @@
 </body>
 <?php 
 // $host = 'http://localhost:20211';
-$host = 'https://ml5-server.uinsu.my.id';
+$host = 'https://cek-kematangan-alpukat.herokuapp.com';
 ?>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/JQuery/jquery-3.6.0.min.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/plugins/ColorThief/color-thief.js') ?>"></script>
