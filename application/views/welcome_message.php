@@ -255,21 +255,17 @@ socket.on('loaded', (data) => {
 });
 
 socket.on('checked', result => {
-	// var cr = random_integer(0, 1);
-	// if (cr == 0) {
-	// 	var find_result = find_value(all_data, 'name', result.knn[0]);
-	// 	$('#result-label').text(all_data[find_result].name);
-	// 	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
-	// } else {
-	// 	var find_result = find_value(all_data, 'name', result.result.label);
-	// 	$('#result-label').text(all_data[find_result].name);
-	// 	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
-	// }
-
-	console.log(result);
 	var find_result = find_value(all_data, 'name', result.result.label);
-	$('#result-label').text(all_data[find_result].name);
-	$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	if (find_result === false) {
+		find_result = find_value(all_data, 'name', result.knn);
+		if (find_result !== false) {
+			$('#result-label').text(all_data[find_result].name);
+			$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+		}
+	} else {
+		$('#result-label').text(all_data[find_result].name);
+		$('#result-description').text(all_data[find_result].description+' '+result.percent+'%');
+	}
 });
 
 socket.on('debug', data => {
@@ -324,17 +320,18 @@ socket.on('debug', data => {
 
 var button_element = {
 	button_open_camera: {
-		rear: '<a class="btn open-camera btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
-		front: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
-		default: '<a class="btn open-camera btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Komputer/Laptop</a>'
+		rear: '<a class="btn open-camera btn-sm btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
+		front: '<a class="btn open-camera btn-sm btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
+		default: '<a class="btn open-camera btn-sm btn-success" camera-type="front" href="#" role="button">Buka Kamera Komputer/Laptop</a>'
 	},
 	open_capture: {
-		rear: '<a class="btn open-capture btn-lg btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
-		front: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
-		default: '<a class="btn open-capture btn-lg btn-success" camera-type="front" href="#" role="button">Ambil Gambar</a>'
+		rear: '<a class="btn open-capture btn-sm btn-success" camera-type="rear" href="#" role="button">Buka Kamera Belakang</a>',
+		front: '<a class="btn open-capture btn-sm btn-success" camera-type="front" href="#" role="button">Buka Kamera Depan</a>',
+		default: '<a class="btn open-capture btn-sm btn-success" camera-type="front" href="#" role="button">Ambil Gambar</a>'
 	},
 	addons_button: {
-		take_picture: '<br><a class="btn take-picture btn-lg btn-success" count-dount="0" camera-type="rear" href="#" role="button">Ambil Gambar</a> <a class="btn take-picture btn-lg btn-success" count-dount="1" camera-type="rear" href="#" role="button">Hitung Mundur</a><br>'
+		take_picture: '<br><a class="btn take-picture btn-sm btn-success" count-dount="0" camera-type="rear" href="#" role="button">Ambil Gambar</a> <a class="btn take-picture btn-sm btn-success" count-dount="1" camera-type="rear" href="#" role="button">Hitung Mundur</a><br>',
+		upload_picture: '<p>Unggah Gambar</p><center><input clas="btn open-capture btn-sm btn-success" type="file" accept="image/*"></center>'
 	},
 	button_stop_camera: '<a class="btn close-camera btn-sm btn-success" href="#" role="button">Tutup Kamera</a>'
 }
@@ -444,17 +441,35 @@ function draw_html() {
 	html_element += '<p class="lead">Dengan mengizinkan browser mengakses kamera anda maka sistem pengecekkan buah alpukat siap untuk anda gunakan</p>';
 
 	if (isMobile) {
-		// html_element += '<p>'+button_element.button_open_camera.rear+'</p>';
-		// html_element += '<p>'+button_element.button_open_camera.front+'</p>';
 		html_element += '<p>'+button_element.open_capture.rear+'</p>';
 		html_element += '<p>'+button_element.open_capture.front+'</p>';
 	} else {
 		html_element += '<p>'+button_element.button_open_camera.default+'</p>';
 		html_element += '<p>'+button_element.open_capture.default+'</p>';
+		html_element += '<p>atau</p>';
+		html_element += '<div id="upload-target" class="col-lg-12" style="border:1px solid black; padding:10px; border-radius:10px; background-color: gray; color: white;">'+button_element.addons_button.upload_picture+'</div>';
 	}
 
 	$('.jumbotron').html(html_element);
 }
+
+const target = document.getElementById('upload-target');
+
+function dragOrChooseImage(file) {
+	console.log(file);
+}
+
+target.addEventListener('drop', (e) => {
+	e.stopPropagation();
+	e.preventDefault();
+	dragOrChooseImage(e.dataTransfer.files);
+});
+
+target.addEventListener('dragover', (e) => {
+	e.stopPropagation();
+	e.preventDefault();
+	e.dataTransfer.dropEffect = 'move';
+});
 
 $(document).on('click', '.open-camera', function(event) {
 	event.preventDefault();
@@ -586,8 +601,6 @@ $(document).on('click', '.open-capture', function(event) {
 						context.fillStyle = "#AAA";
 						context.fillRect(0, 0, imageBitmap.width, imageBitmap.height);
 
-						console.log(canvas);
-
 						canvas.width = imageBitmap.width;
 						canvas.height = imageBitmap.height;
 						drawCanvas(canvas, imageBitmap);
@@ -595,6 +608,7 @@ $(document).on('click', '.open-capture', function(event) {
 						image.src = canvas.toDataURL();
 
 						image.addEventListener('load', function() {
+							video.pause();
 							var colorThief = new ColorThief();
 							var colorArray = colorThief.getPalette(image, 16);
 
@@ -629,7 +643,6 @@ $(document).on('click', '.open-capture', function(event) {
 					video.pause();
 				} else {
 					take();
-					video.pause();
 				}
 			});
 
@@ -649,5 +662,20 @@ $(document).on('click', '.open-capture', function(event) {
 		}, console.log)
 	}
 });
+
+
+async function test(img_url) {
+	var load_image = new Promise((resolve, reject) => {
+		const img_temp = new Image();
+		img_temp.onload = () => resolve(img_temp)
+		img_temp.crossOrigin = 'anonymous';
+		img_temp.src = img_url;
+	});
+	const img = await load_image;
+	const features = featureExtractor.infer(img);
+	window.knnClassifier.classify(features, (error, result) => {
+		console.log(result)
+	});
+};
 </script>
 </html>
